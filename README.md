@@ -8,6 +8,11 @@ before you delete it.
 The same codebase runs on Windows and macOS (and Linux); the correct OS
 implementation is chosen at runtime.
 
+<p align="center">
+  <img src="docs/screenshots/dark.png" width="49%" alt="Smart Scan, dark theme" />
+  <img src="docs/screenshots/light.png" width="49%" alt="Smart Scan, light theme" />
+</p>
+
 ## Features
 
 **Smart Scan** looks across several categories and lists each item with its size and a
@@ -56,6 +61,8 @@ Paste an API key and, optionally, a model name. Settings are stored locally unde
 user profile and take effect right away. You can also set `ANTHROPIC_API_KEY` or
 `OPENAI_API_KEY` in the environment. With no key, the app falls back to a small offline
 heuristic for common items, so it never blocks the UI or fails.
+
+![Settings: choose any AI provider](docs/screenshots/settings.png)
 
 The interface has a translucent theme with a light / dark / system toggle.
 
