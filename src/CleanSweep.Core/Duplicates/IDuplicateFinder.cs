@@ -12,6 +12,9 @@ public sealed class DuplicateScanOptions
     /// <summary>Directory names skipped wholesale - huge/system/rebuildable trees.</summary>
     public IReadOnlySet<string> SkipDirectoryNames { get; init; } = DefaultSkipDirs;
 
+    /// <summary>Absolute folders the user has chosen never to scan.</summary>
+    public IReadOnlyList<string> ExcludedPaths { get; init; } = Array.Empty<string>();
+
     public static readonly IReadOnlySet<string> DefaultSkipDirs =
         new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {

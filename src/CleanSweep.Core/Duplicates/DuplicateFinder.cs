@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using CleanSweep.Core.Services;
 
 namespace CleanSweep.Core.Duplicates;
 
@@ -22,12 +23,13 @@ public sealed class DuplicateFinder : IDuplicateFinder
         IProgress<string>? progress, CancellationToken ct)
     {
         // Pass 1 - bucket candidate files by exact size.
+        var excluded = PathScope.Normalize(options.ExcludedPaths);
         var bySize = new Dictionary<long, List<string>>();
         foreach (var root in roots.Where(r => !string.IsNullOrWhiteSpace(r)).Distinct())
         {
             if (!Directory.Exists(root)) continue;
             progress?.Report($"Scanning {root} for duplicates");
-            Walk(root, 0, options, ct, (path, size) =>
+            Walk(root, 0, options, excluded, ct, (path, size) =>
             {
                 if (size < options.MinFileSizeBytes) return;
                 if (!bySize.TryGetValue(size, out var list)) bySize[size] = list = new();
@@ -125,11 +127,12 @@ public sealed class DuplicateFinder : IDuplicateFinder
         catch { return null; }
     }
 
-    private void Walk(string dir, int depth, DuplicateScanOptions opt,
+    private void Walk(string dir, int depth, DuplicateScanOptions opt, string[] excluded,
                       CancellationToken ct, Action<string, long> onFile)
     {
         ct.ThrowIfCancellationRequested();
         if (depth > opt.MaxDepth) return;
+        if (PathScope.IsUnderAny(dir, excluded)) return;
 
         try
         {
@@ -158,7 +161,7 @@ public sealed class DuplicateFinder : IDuplicateFinder
             if (opt.SkipDirectoryNames.Contains(Path.GetFileName(sub))) continue;
             try { if ((new DirectoryInfo(sub).Attributes & FileAttributes.ReparsePoint) != 0) continue; }
             catch { continue; }
-            Walk(sub, depth + 1, opt, ct, onFile);
+            Walk(sub, depth + 1, opt, excluded, ct, onFile);
         }
     }
 }

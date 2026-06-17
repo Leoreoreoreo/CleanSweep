@@ -1,10 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
 namespace CleanSweep.Services;
 
-/// <summary>User settings persisted locally (e.g. the Anthropic API key + model override).</summary>
+/// <summary>User settings persisted locally (AI provider + key, theme, scan preferences).</summary>
 public sealed class AppSettings
 {
     public string? Provider { get; set; }
@@ -12,6 +13,12 @@ public sealed class AppSettings
     public string? Model { get; set; }
     public string? BaseUrl { get; set; }
     public string? Theme { get; set; }
+
+    /// <summary>Folders to skip in every scan.</summary>
+    public List<string> Exclusions { get; set; } = new();
+
+    /// <summary>Automatic re-scan cadence while the app is open: "Off", "6h" or "24h".</summary>
+    public string? AutoScan { get; set; }
 }
 
 /// <summary>Reads/writes <see cref="AppSettings"/> as JSON under the user's app-data folder.</summary>

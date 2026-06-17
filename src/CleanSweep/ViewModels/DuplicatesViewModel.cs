@@ -23,6 +23,7 @@ public partial class DuplicatesViewModel : ViewModelBase
     private readonly ScanEngine _engine;
     private readonly IPlatformPaths _paths;
     private readonly IDialogService _dialogs;
+    private readonly Func<IReadOnlyList<string>>? _exclusions;
     private readonly IDuplicateFinder _finder = new DuplicateFinder();
     private CancellationTokenSource? _cts;
 
@@ -35,11 +36,13 @@ public partial class DuplicatesViewModel : ViewModelBase
     public string SelectedText => ByteSize.Human(SelectedBytes);
     public bool HasGroups => Groups.Count > 0;
 
-    public DuplicatesViewModel(ScanEngine engine, IPlatformPaths paths, IDialogService dialogs)
+    public DuplicatesViewModel(ScanEngine engine, IPlatformPaths paths, IDialogService dialogs,
+                               Func<IReadOnlyList<string>>? exclusions = null)
     {
         _engine = engine;
         _paths = paths;
         _dialogs = dialogs;
+        _exclusions = exclusions;
     }
 
     partial void OnSelectedBytesChanged(long value) => OnPropertyChanged(nameof(SelectedText));
@@ -59,7 +62,8 @@ public partial class DuplicatesViewModel : ViewModelBase
             StatusText = "Scanning for duplicates...";
             var progress = new Progress<string>(s => StatusText = s);
             var roots = _paths.DevSearchRoots.Append(Path.Combine(_paths.HomeDirectory, "Downloads"));
-            var groups = await _finder.FindAsync(roots, new DuplicateScanOptions(), progress, _cts.Token);
+            var options = new DuplicateScanOptions { ExcludedPaths = _exclusions?.Invoke() ?? Array.Empty<string>() };
+            var groups = await _finder.FindAsync(roots, options, progress, _cts.Token);
 
             foreach (var g in groups)
             {

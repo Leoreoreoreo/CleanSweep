@@ -39,9 +39,14 @@ public sealed class ScanEngine
     public async Task<List<CategoryResult>> ScanAsync(
         IProgress<string>? progress = null,
         IProgress<CategoryResult>? onCategory = null,
+        IReadOnlyList<string>? excludedPaths = null,
         CancellationToken ct = default)
     {
-        var ctx = new ScanContext { Paths = _paths, Scanner = _scanner, Progress = progress, Cancellation = ct };
+        var ctx = new ScanContext
+        {
+            Paths = _paths, Scanner = _scanner, Progress = progress, Cancellation = ct,
+            ExcludedPaths = excludedPaths ?? Array.Empty<string>()
+        };
         var tasks = _modules.Select(m => Task.Run(() =>
         {
             try { return m.Scan(ctx); }

@@ -123,6 +123,26 @@
             <Setter Property="RenderTransform" Value="translateY(-3px)"/>
         </Style>
 
+        <!-- Result rows ease in as they are added; live scan staggers them naturally -->
+        <Style Selector="Border.result">
+            <Style.Animations>
+                <Animation Duration="0:0:0.34" Easing="CubicEaseOut">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="0"/>
+                        <Setter Property="MaxHeight" Value="0"/>
+                    </KeyFrame>
+                    <KeyFrame Cue="40%">
+                        <Setter Property="Opacity" Value="0"/>
+                        <Setter Property="MaxHeight" Value="800"/>
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="1"/>
+                        <Setter Property="MaxHeight" Value="800"/>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+
         <!-- Section pages cross-fade when switching the sidebar -->
         <Style Selector="DockPanel.page">
             <Setter Property="Transitions">

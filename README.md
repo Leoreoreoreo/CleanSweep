@@ -34,6 +34,9 @@ checkbox:
 | Package caches | npm / pip / NuGet / Yarn download caches |
 | Large files | Files of 100 MB or more under your dev roots and Downloads (opt-in) |
 
+Results fill in category by category as each finishes, and a ring gauge tracks how much
+of the total you have selected to remove.
+
 **Duplicate finder** groups byte-for-byte identical files. It compares by size first,
 then a partial hash, then a full hash, so it only does the expensive work when it has
 to. Keep one copy and remove the rest.
@@ -48,6 +51,9 @@ folders, and Task Scheduler logon tasks; on macOS, LaunchAgents and login items.
 
 **Free up RAM** trims process working sets on Windows or runs `purge` on macOS, with a
 before/after memory gauge.
+
+**Scan preferences** (under Settings) let you exclude folders that every scan should
+skip, and optionally re-run Smart Scan on a 6- or 24-hour schedule while the app is open.
 
 ## AI explainer (optional)
 

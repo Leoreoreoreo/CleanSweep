@@ -33,6 +33,7 @@ public sealed class DevJunkModule : ICleanupModule
     {
         ctx.Cancellation.ThrowIfCancellationRequested();
         if (depth > MaxDepth) return;
+        if (ctx.IsExcluded(dir)) return;
 
         List<string> subs;
         try { subs = Directory.EnumerateDirectories(dir).ToList(); }

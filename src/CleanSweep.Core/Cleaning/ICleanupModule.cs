@@ -11,6 +11,15 @@ public sealed class ScanContext
     public required FileSystemScanner Scanner { get; init; }
     public IProgress<string>? Progress { get; init; }
     public CancellationToken Cancellation { get; init; }
+
+    /// <summary>Folders the user has chosen never to scan.</summary>
+    public IReadOnlyList<string> ExcludedPaths { get; init; } = Array.Empty<string>();
+
+    private string[]? _excluded;
+
+    /// <summary>True if <paramref name="path"/> is, or sits under, an excluded folder.</summary>
+    public bool IsExcluded(string path)
+        => ExcludedPaths.Count != 0 && PathScope.IsUnderAny(path, _excluded ??= PathScope.Normalize(ExcludedPaths));
 }
 
 /// <summary>A unit of scanning logic for one <see cref="CleanCategory"/>.</summary>

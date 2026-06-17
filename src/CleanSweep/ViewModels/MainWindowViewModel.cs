@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CleanSweep.AI;
@@ -26,6 +27,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly IMemoryManager _memory = MemoryManagerFactory.Current;
     private readonly AiItemExplainer _explainer = ItemExplainerFactory.Create();
     private readonly IDialogService _dialogs;
+    private readonly DispatcherTimer _autoScanTimer;
     private CancellationTokenSource? _cts;
 
     public ObservableCollection<CategoryViewModel> Categories { get; } = new();
@@ -84,11 +86,32 @@ public partial class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel(IDialogService dialogs)
     {
         _dialogs = dialogs;
-        Duplicates = new DuplicatesViewModel(_engine, PlatformPaths.Current, dialogs);
+        Settings = new SettingsViewModel(_explainer, new SettingsStore(), dialogs);
+        Duplicates = new DuplicatesViewModel(_engine, PlatformPaths.Current, dialogs, () => Settings.ExcludedPaths);
         Apps = new AppsViewModel(AppInventory.Create(), dialogs);
         Startup = new StartupViewModel(StartupManager.Create(), dialogs);
-        Settings = new SettingsViewModel(_explainer, new SettingsStore());
+
+        _autoScanTimer = new DispatcherTimer();
+        _autoScanTimer.Tick += OnAutoScanTick;
+        Settings.AutoScanChanged += (_, _) => ConfigureAutoScan();
+        ConfigureAutoScan();
+
         RefreshMemory();
+    }
+
+    private void ConfigureAutoScan()
+    {
+        _autoScanTimer.Stop();
+        if (Settings.AutoScanInterval is { } interval)
+        {
+            _autoScanTimer.Interval = interval;
+            _autoScanTimer.Start();
+        }
+    }
+
+    private void OnAutoScanTick(object? sender, EventArgs e)
+    {
+        if (!IsBusy) _ = RunScanAsync();
     }
 
     partial void OnTotalReclaimableChanged(long value)
@@ -120,7 +143,7 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             StatusText = "Scanning...";
             var onCategory = new Progress<CategoryResult>(AddCategory);
-            await _engine.ScanAsync(progress, onCategory, _cts.Token);
+            await _engine.ScanAsync(progress, onCategory, Settings.ExcludedPaths, _cts.Token);
             UpdateTotals();
             HasResults = Categories.Count > 0;
             OnPropertyChanged(nameof(LargeFilesCategory));

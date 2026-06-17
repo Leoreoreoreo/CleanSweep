@@ -37,6 +37,7 @@ public sealed class LargeFilesModule : ICleanupModule
     {
         ctx.Cancellation.ThrowIfCancellationRequested();
         if (depth > MaxDepth) return;
+        if (ctx.IsExcluded(dir)) return;
 
         try
         {

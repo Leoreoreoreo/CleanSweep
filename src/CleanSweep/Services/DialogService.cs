@@ -4,22 +4,38 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Platform.Storage;
 
 namespace CleanSweep.Services;
 
-/// <summary>Modal confirmations for irreversible actions, decoupled from the view models.</summary>
+/// <summary>Modal confirmations and pickers for the view models, decoupled from the views.</summary>
 public interface IDialogService
 {
     Task<bool> ConfirmAsync(string title, string message, string confirmText = "OK", bool destructive = false);
+
+    /// <summary>Native folder picker; returns the chosen local path, or null if cancelled.</summary>
+    Task<string?> PickFolderAsync(string title);
 }
 
 public sealed class DialogService : IDialogService
 {
+    private static Window? MainWindow =>
+        (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+
     public async Task<bool> ConfirmAsync(string title, string message, string confirmText = "OK", bool destructive = false)
     {
-        var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+        var owner = MainWindow;
         if (owner is null) return false; // no UI (e.g. design time) - never auto-confirm a destructive action
         return await new ConfirmWindow(title, message, confirmText, destructive).ShowDialog<bool>(owner);
+    }
+
+    public async Task<string?> PickFolderAsync(string title)
+    {
+        var owner = MainWindow;
+        if (owner is null) return null;
+        var folders = await owner.StorageProvider.OpenFolderPickerAsync(
+            new FolderPickerOpenOptions { Title = title, AllowMultiple = false });
+        return folders.Count > 0 ? folders[0].TryGetLocalPath() : null;
     }
 }
 

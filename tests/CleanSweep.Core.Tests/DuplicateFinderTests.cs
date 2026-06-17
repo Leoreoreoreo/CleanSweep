@@ -81,4 +81,21 @@ public sealed class DuplicateFinderTests
         Assert.Equal(2, group.Count);
         Assert.DoesNotContain(group.Files, f => f.Path.Contains("node_modules"));
     }
+
+    [Fact]
+    public async Task Excluded_paths_are_skipped()
+    {
+        using var tree = new TempTree();
+        WriteText(tree, "keep/a.txt", "shared body");
+        WriteText(tree, "skip/b.txt", "shared body"); // identical, but under a folder we exclude
+
+        // Baseline: both copies are seen, so they form one duplicate group of two.
+        var all = await Find(tree, new DuplicateScanOptions { MinFileSizeBytes = 1 });
+        Assert.Equal(2, Assert.Single(all).Count);
+
+        // Excluding skip/ leaves a single copy, so there is no duplicate group.
+        var excluded = Path.Combine(tree.Root, "skip");
+        var groups = await Find(tree, new DuplicateScanOptions { MinFileSizeBytes = 1, ExcludedPaths = new[] { excluded } });
+        Assert.Empty(groups);
+    }
 }
