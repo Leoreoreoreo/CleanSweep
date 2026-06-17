@@ -1,5 +1,10 @@
 # CleanSweep
 
+[![CI](https://github.com/Leoreoreoreo/CleanSweep/actions/workflows/ci.yml/badge.svg)](https://github.com/Leoreoreoreo/CleanSweep/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/Leoreoreoreo/CleanSweep)](https://github.com/Leoreoreoreo/CleanSweep/releases/latest)
+[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 A cross-platform disk and memory cleaner for Windows and macOS, built with .NET 10
 and Avalonia. It finds reclaimable space, removes duplicates, manages installed apps
 and startup items, and frees up RAM. An optional AI helper can explain any item
