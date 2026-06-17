@@ -76,6 +76,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public string TotalReclaimableText => ByteSize.Human(TotalReclaimable);
     public string SelectedText => ByteSize.Human(SelectedBytes);
+    /// <summary>Selected / total, for the reclaimable ring gauge.</summary>
+    public double SelectedFraction => TotalReclaimable > 0 ? (double)SelectedBytes / TotalReclaimable : 0;
 
     public MainWindowViewModel() : this(new DialogService()) { }
 
@@ -89,8 +91,16 @@ public partial class MainWindowViewModel : ViewModelBase
         RefreshMemory();
     }
 
-    partial void OnTotalReclaimableChanged(long value) => OnPropertyChanged(nameof(TotalReclaimableText));
-    partial void OnSelectedBytesChanged(long value) => OnPropertyChanged(nameof(SelectedText));
+    partial void OnTotalReclaimableChanged(long value)
+    {
+        OnPropertyChanged(nameof(TotalReclaimableText));
+        OnPropertyChanged(nameof(SelectedFraction));
+    }
+    partial void OnSelectedBytesChanged(long value)
+    {
+        OnPropertyChanged(nameof(SelectedText));
+        OnPropertyChanged(nameof(SelectedFraction));
+    }
 
     [RelayCommand]
     private async Task Scan() => await RunScanAsync();
@@ -109,14 +119,8 @@ public partial class MainWindowViewModel : ViewModelBase
         try
         {
             StatusText = "Scanning...";
-            var results = await _engine.ScanAsync(progress, _cts.Token);
-            foreach (var result in results)
-            {
-                if (result.Count == 0) continue;
-                var category = new CategoryViewModel(result, _explainer);
-                category.PropertyChanged += OnCategoryChanged;
-                Categories.Add(category);
-            }
+            var onCategory = new Progress<CategoryResult>(AddCategory);
+            await _engine.ScanAsync(progress, onCategory, _cts.Token);
             UpdateTotals();
             HasResults = Categories.Count > 0;
             OnPropertyChanged(nameof(LargeFilesCategory));
@@ -128,6 +132,19 @@ public partial class MainWindowViewModel : ViewModelBase
         catch (OperationCanceledException) { StatusText = "Scan cancelled."; }
         catch (Exception ex) { StatusText = $"Scan failed: {ex.Message}"; }
         finally { IsBusy = false; RefreshMemory(); }
+    }
+
+    // Called as each category finishes scanning, so results fill in live.
+    private void AddCategory(CategoryResult result)
+    {
+        var category = new CategoryViewModel(result, _explainer);
+        category.PropertyChanged += OnCategoryChanged;
+        Categories.Add(category);
+        UpdateTotals();
+        HasResults = true;
+        OnPropertyChanged(nameof(LargeFilesCategory));
+        OnPropertyChanged(nameof(HasLargeFiles));
+        StatusText = $"Scanning... {ByteSize.Human(TotalReclaimable)} found so far";
     }
 
     [RelayCommand]

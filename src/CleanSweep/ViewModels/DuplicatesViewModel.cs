@@ -86,25 +86,19 @@ public partial class DuplicatesViewModel : ViewModelBase
         if (IsBusy) return;
 
         var toDelete = new List<CleanItem>();
-        foreach (var group in Groups)
-        {
-            var selected = group.Files.Where(f => f.IsSelected).ToList();
-            if (selected.Count == 0) continue;
-            // Keep-one safety net: never remove every copy in a group.
-            if (selected.Count >= group.Files.Count) selected = selected.Skip(1).ToList();
-            toDelete.AddRange(selected.Select(f => f.ToCleanItem()));
-        }
+        foreach (var group in Groups.Where(g => g.IncludeInCleanup))
+            toDelete.AddRange(group.RemovableFiles.Select(f => f.ToCleanItem()));
 
         if (toDelete.Count == 0)
         {
-            StatusText = "Select the duplicate copies to remove - one copy in each group is always kept.";
+            StatusText = "Tick \"Remove other copies\" on the groups to clean; the copy marked Keep is always kept.";
             return;
         }
 
         long bytes = toDelete.Sum(i => i.SizeBytes);
         bool ok = await _dialogs.ConfirmAsync(
             "Delete duplicates?",
-            $"Permanently delete {toDelete.Count} duplicate file(s), freeing about {ByteSize.Human(bytes)}? One copy in each group is kept.",
+            $"Permanently delete {toDelete.Count} duplicate copy(ies), freeing about {ByteSize.Human(bytes)}? The copy marked Keep in each group is kept.",
             "Delete", destructive: true);
         if (!ok) return;
 
@@ -132,36 +126,37 @@ public partial class DuplicateGroupViewModel : ObservableObject
     public ObservableCollection<DuplicateFileViewModel> Files { get; } = new();
 
     [ObservableProperty] private bool _isExpanded;
+    [ObservableProperty] private bool _includeInCleanup;
 
     public event EventHandler? SelectionChanged;
 
     public DuplicateGroupViewModel(DuplicateGroup model)
     {
         Model = model;
-        // Show the oldest copy first as the natural "keep".
+        bool first = true;
+        // The oldest copy is the default "keep".
         foreach (var f in model.Files.OrderBy(f => f.LastModified ?? DateTime.MaxValue))
         {
-            var vm = new DuplicateFileViewModel(f);
+            var vm = new DuplicateFileViewModel(f, model.ContentHash) { IsKept = first };
             vm.PropertyChanged += OnFileChanged;
             Files.Add(vm);
+            first = false;
         }
     }
 
     public string Header =>
         $"{Files.Count} copies · {ByteSize.Human(Model.FileSizeBytes)} each · up to {ByteSize.Human(Model.ReclaimableBytes)} reclaimable";
     public string Title => Files.Count > 0 ? Files[0].Name : "Duplicate set";
-    public long SelectedBytes => Files.Where(f => f.IsSelected).Sum(f => f.SizeBytes);
 
-    /// <summary>Selects every copy except the first (the suggested keep).</summary>
-    [RelayCommand]
-    private void SelectExtras()
-    {
-        for (int i = 0; i < Files.Count; i++) Files[i].IsSelected = i != 0;
-    }
+    /// <summary>Every copy except the one marked Keep.</summary>
+    public IEnumerable<DuplicateFileViewModel> RemovableFiles => Files.Where(f => !f.IsKept);
+    public long SelectedBytes => IncludeInCleanup ? RemovableFiles.Sum(f => f.SizeBytes) : 0;
+
+    partial void OnIncludeInCleanupChanged(bool value) => SelectionChanged?.Invoke(this, EventArgs.Empty);
 
     private void OnFileChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(DuplicateFileViewModel.IsSelected))
+        if (e.PropertyName == nameof(DuplicateFileViewModel.IsKept))
             SelectionChanged?.Invoke(this, EventArgs.Empty);
     }
 }
@@ -169,10 +164,15 @@ public partial class DuplicateGroupViewModel : ObservableObject
 public partial class DuplicateFileViewModel : ObservableObject
 {
     public DuplicateFile Model { get; }
+    public string GroupId { get; }
 
-    [ObservableProperty] private bool _isSelected;
+    [ObservableProperty] private bool _isKept;
 
-    public DuplicateFileViewModel(DuplicateFile model) => Model = model;
+    public DuplicateFileViewModel(DuplicateFile model, string groupId)
+    {
+        Model = model;
+        GroupId = groupId;
+    }
 
     public string Name => Model.Name;
     public string Path => Model.Path;

@@ -31,8 +31,15 @@ public sealed class ScanEngine
         else _modules.Add(new TrashDirModule());
     }
 
-    /// <summary>Scans all categories concurrently and returns them sorted by category.</summary>
-    public async Task<List<CategoryResult>> ScanAsync(IProgress<string>? progress = null, CancellationToken ct = default)
+    /// <summary>
+    /// Scans all categories concurrently. <paramref name="onCategory"/> is reported as
+    /// each category finishes (in completion order) so the UI can fill in live; the
+    /// returned list is the full set sorted by category.
+    /// </summary>
+    public async Task<List<CategoryResult>> ScanAsync(
+        IProgress<string>? progress = null,
+        IProgress<CategoryResult>? onCategory = null,
+        CancellationToken ct = default)
     {
         var ctx = new ScanContext { Paths = _paths, Scanner = _scanner, Progress = progress, Cancellation = ct };
         var tasks = _modules.Select(m => Task.Run(() =>
@@ -40,9 +47,15 @@ public sealed class ScanEngine
             try { return m.Scan(ctx); }
             catch (OperationCanceledException) { throw; }
             catch { return new CategoryResult { Category = m.Category }; }
-        }, ct));
+        }, ct)).ToList();
 
-        var results = await Task.WhenAll(tasks).ConfigureAwait(false);
+        var results = new List<CategoryResult>(tasks.Count);
+        await foreach (var finished in Task.WhenEach(tasks).WithCancellation(ct).ConfigureAwait(false))
+        {
+            var result = await finished.ConfigureAwait(false);
+            results.Add(result);
+            if (result.Count > 0) onCategory?.Report(result);
+        }
         return results.OrderBy(r => (int)r.Category).ToList();
     }
 

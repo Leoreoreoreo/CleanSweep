@@ -111,7 +111,8 @@
                                            Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 <TextBlock Text="{Binding Header}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                             </StackPanel>
-                            <Button Grid.Column="1" Content="Select extras" Command="{Binding SelectExtrasCommand}" Margin="8,0,12,0"/>
+                            <CheckBox Grid.Column="1" Content="Remove other copies" Margin="8,0,12,0" VerticalAlignment="Center"
+                                      IsChecked="{Binding IncludeInCleanup, Mode=TwoWay}"/>
                         </Grid>
                     </Expander.Header>
                     <ItemsControl ItemsSource="{Binding Files}" Margin="0,4,0,4"/>
@@ -128,7 +129,8 @@
                         <MenuItem Header="Reveal in file manager" Command="{Binding RevealCommand}" IsEnabled="{Binding CanReveal}"/>
                     </ContextMenu>
                 </Grid.ContextMenu>
-                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center"/>
+                <RadioButton Grid.Column="0" Content="Keep" GroupName="{Binding GroupId}" VerticalAlignment="Center"
+                             IsChecked="{Binding IsKept, Mode=TwoWay}"/>
                 <StackPanel Grid.Column="1" Margin="4,0,0,0" VerticalAlignment="Center">
                     <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource TextPrimaryBrush}"/>
                     <TextBlock Text="{Binding Path}" FontSize="10" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource TextSecondaryBrush}"/>
@@ -313,18 +315,38 @@
                     <ProgressBar DockPanel.Dock="Top" IsIndeterminate="True" Height="3" Margin="0,12,0,0"
                                  IsVisible="{Binding IsBusy}"/>
 
-                    <Border DockPanel.Dock="Bottom" Classes="card" Padding="16,12" Margin="0,14,0,0">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding StatusText}" TextWrapping="Wrap" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                <TextBlock Margin="0,3,0,0" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}">
-                                    <Run Text="Selected:"/>
-                                    <Run Text="{Binding SelectedText}" FontWeight="SemiBold"/>
-                                    <Run Text="  of  "/>
+                    <!-- Reclaimable ring -->
+                    <Border DockPanel.Dock="Top" Classes="card" Margin="0,14,0,0" Padding="20,16" IsVisible="{Binding HasResults}">
+                        <Grid ColumnDefinitions="Auto,*" VerticalAlignment="Center">
+                            <Grid Grid.Column="0" Width="150" Height="150">
+                                <Ellipse Width="150" Height="150" StrokeThickness="11" Stroke="{DynamicResource HairlineBrush}"/>
+                                <Path StrokeThickness="11" StrokeLineCap="Round" Stroke="{DynamicResource AccentBrush}"
+                                      Data="{Binding SelectedFraction, Converter={StaticResource RingGauge}}"/>
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding TotalReclaimableText}" FontSize="21" FontWeight="Bold"
+                                               HorizontalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <TextBlock Text="reclaimable" FontSize="11" HorizontalAlignment="Center"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                </StackPanel>
+                            </Grid>
+                            <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Center" Spacing="6">
+                                <TextBlock Text="Reclaimable space" FontSize="16" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource TextSecondaryBrush}">
+                                    <Run Text="Selected"/>
+                                    <Run Text="{Binding SelectedText}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <Run Text="of"/>
                                     <Run Text="{Binding TotalReclaimableText}"/>
-                                    <Run Text="reclaimable"/>
+                                    <Run Text="- tick what you want below, then Clean."/>
                                 </TextBlock>
                             </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Border DockPanel.Dock="Bottom" Classes="card" Padding="16,12" Margin="0,14,0,0">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0" Text="{Binding StatusText}" TextWrapping="Wrap"
+                                       VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <Button Grid.Column="1" Content="Clean" Classes="accent" FontWeight="Bold"
                                     Padding="22,10" Command="{Binding CleanCommand}" IsEnabled="{Binding HasResults}"/>
                         </Grid>
