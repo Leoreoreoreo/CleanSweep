@@ -17,6 +17,9 @@ implementation is chosen at runtime.
   <img src="docs/screenshots/dark.png" width="49%" alt="Smart Scan, dark theme" />
   <img src="docs/screenshots/light.png" width="49%" alt="Smart Scan, light theme" />
 </p>
+<p align="center">
+  <img src="docs/screenshots/diskusage.png" width="70%" alt="Disk Usage donut chart" />
+</p>
 
 ## Features
 
@@ -36,6 +39,10 @@ checkbox:
 
 Results fill in category by category as each finishes, and a ring gauge tracks how much
 of the total you have selected to remove.
+
+**Disk Usage** measures where space goes inside any folder and draws it as a donut
+chart with a ranked legend, so the biggest folders are obvious at a glance. Analyze your
+home folder or pick any other.
 
 **Duplicate finder** groups byte-for-byte identical files. It compares by size first,
 then a partial hash, then a full hash, so it only does the expensive work when it has

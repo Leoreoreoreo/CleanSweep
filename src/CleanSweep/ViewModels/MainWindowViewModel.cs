@@ -34,6 +34,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     /// <summary>Phase 3 capabilities, each its own section.</summary>
     public DuplicatesViewModel Duplicates { get; }
+    public DiskUsageViewModel DiskUsage { get; }
     public AppsViewModel Apps { get; }
     public StartupViewModel Startup { get; }
     public SettingsViewModel Settings { get; }
@@ -49,21 +50,23 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private string _memoryDetail = "";
 
     // ---- Sidebar navigation ----
-    // 0 Smart Scan · 1 Large Files · 2 Duplicates · 3 Apps · 4 Startup · 5 Memory · 6 Settings
+    // 0 Smart Scan · 1 Large Files · 2 Disk Usage · 3 Duplicates · 4 Apps · 5 Startup · 6 Memory · 7 Settings
     [ObservableProperty] private int _selectedSectionIndex;
 
     public bool IsSmartScanSection => SelectedSectionIndex == 0;
     public bool IsLargeFilesSection => SelectedSectionIndex == 1;
-    public bool IsDuplicatesSection => SelectedSectionIndex == 2;
-    public bool IsAppsSection => SelectedSectionIndex == 3;
-    public bool IsStartupSection => SelectedSectionIndex == 4;
-    public bool IsMemorySection => SelectedSectionIndex == 5;
-    public bool IsSettingsSection => SelectedSectionIndex == 6;
+    public bool IsDiskUsageSection => SelectedSectionIndex == 2;
+    public bool IsDuplicatesSection => SelectedSectionIndex == 3;
+    public bool IsAppsSection => SelectedSectionIndex == 4;
+    public bool IsStartupSection => SelectedSectionIndex == 5;
+    public bool IsMemorySection => SelectedSectionIndex == 6;
+    public bool IsSettingsSection => SelectedSectionIndex == 7;
 
     partial void OnSelectedSectionIndexChanged(int value)
     {
         OnPropertyChanged(nameof(IsSmartScanSection));
         OnPropertyChanged(nameof(IsLargeFilesSection));
+        OnPropertyChanged(nameof(IsDiskUsageSection));
         OnPropertyChanged(nameof(IsDuplicatesSection));
         OnPropertyChanged(nameof(IsAppsSection));
         OnPropertyChanged(nameof(IsStartupSection));
@@ -88,6 +91,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _dialogs = dialogs;
         Settings = new SettingsViewModel(_explainer, new SettingsStore(), dialogs);
         Duplicates = new DuplicatesViewModel(_engine, PlatformPaths.Current, dialogs, () => Settings.ExcludedPaths);
+        DiskUsage = new DiskUsageViewModel(dialogs, PlatformPaths.Current);
         Apps = new AppsViewModel(AppInventory.Create(), dialogs);
         Startup = new StartupViewModel(StartupManager.Create(), dialogs);
 

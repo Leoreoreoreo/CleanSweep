@@ -263,6 +263,12 @@
                         </ListBoxItem>
                         <ListBoxItem>
                             <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Path Classes="navicon" Data="{StaticResource IconChart}" Fill="{Binding $parent[ListBoxItem].Foreground}"/>
+                                <TextBlock Text="Disk Usage" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                        <ListBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
                                 <Path Classes="navicon" Data="{StaticResource IconCopy}" Fill="{Binding $parent[ListBoxItem].Foreground}"/>
                                 <TextBlock Text="Duplicates" VerticalAlignment="Center"/>
                             </StackPanel>
@@ -388,6 +394,98 @@
                                 <TextBlock Text="Run a Smart Scan first to list large files here."
                                            Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
                             </StackPanel>
+                        </Panel>
+                    </ScrollViewer>
+                </DockPanel>
+
+                <!-- Disk Usage -->
+                <DockPanel Classes="page" Opacity="{Binding IsDiskUsageSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsDiskUsageSection}" Margin="28,24">
+                    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Disk Usage" Classes="h1"/>
+                            <TextBlock Text="See which folders take up the most space" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <Button Content="Analyze" Classes="accent" FontWeight="SemiBold" Padding="16,8"
+                                    Command="{Binding DiskUsage.AnalyzeCommand}" IsEnabled="{Binding !DiskUsage.IsBusy}"/>
+                            <Button Content="Choose folder..." Command="{Binding DiskUsage.ChooseFolderCommand}" IsEnabled="{Binding !DiskUsage.IsBusy}"/>
+                            <Button Content="Cancel" Command="{Binding DiskUsage.CancelCommand}" IsVisible="{Binding DiskUsage.IsBusy}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <ProgressBar DockPanel.Dock="Top" IsIndeterminate="True" Height="3" Margin="0,12,0,0"
+                                 IsVisible="{Binding DiskUsage.IsBusy}"/>
+
+                    <Border DockPanel.Dock="Bottom" Classes="card" Padding="16,12" Margin="0,14,0,0">
+                        <TextBlock Text="{Binding DiskUsage.StatusText}" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    </Border>
+
+                    <ScrollViewer Margin="0,14,0,0">
+                        <Panel>
+                            <StackPanel IsVisible="{Binding !DiskUsage.HasResults}" HorizontalAlignment="Center"
+                                        VerticalAlignment="Top" Margin="0,80,0,0" Spacing="14">
+                                <Path Data="{StaticResource IconChart}" Width="56" Height="56" Stretch="Uniform"
+                                      HorizontalAlignment="Center" Fill="{DynamicResource TextSecondaryBrush}" Opacity="0.35"/>
+                                <TextBlock Text="Analyze a folder to see what is taking up space."
+                                           Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
+                            </StackPanel>
+
+                            <Border Classes="card" Padding="24" VerticalAlignment="Top" IsVisible="{Binding DiskUsage.HasResults}">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <!-- Donut -->
+                                    <Grid Grid.Column="0" Width="200" Height="200" VerticalAlignment="Top">
+                                        <Ellipse Width="168" Height="168" StrokeThickness="24" Stroke="{DynamicResource HairlineBrush}"
+                                                 HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <ItemsControl ItemsSource="{Binding DiskUsage.Slices}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate><Canvas/></ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate x:DataType="vm:UsageSliceViewModel">
+                                                    <Path Data="{Binding Geometry}" Stroke="{Binding Brush}" StrokeThickness="24"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding DiskUsage.TotalText}" FontSize="22" FontWeight="Bold"
+                                                       HorizontalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            <TextBlock Text="{Binding DiskUsage.RootName}" FontSize="11" MaxWidth="120"
+                                                       TextTrimming="CharacterEllipsis" HorizontalAlignment="Center"
+                                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- Legend -->
+                                    <ItemsControl Grid.Column="1" Margin="30,2,0,0" ItemsSource="{Binding DiskUsage.Slices}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="vm:UsageSliceViewModel">
+                                                <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,13">
+                                                    <Ellipse Grid.Column="0" Width="11" Height="11" Fill="{Binding Brush}" VerticalAlignment="Center"/>
+                                                    <StackPanel Grid.Column="1" Margin="11,0,14,0" VerticalAlignment="Center" Spacing="5">
+                                                        <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis"
+                                                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                        <ProgressBar Minimum="0" Maximum="100" Value="{Binding Percent}" Height="5"
+                                                                     Foreground="{Binding Brush}"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                                        <TextBlock Text="{Binding SizeText}" FontWeight="SemiBold" HorizontalAlignment="Right"
+                                                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                        <TextBlock Text="{Binding PercentText}" FontSize="11" HorizontalAlignment="Right"
+                                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                                    </StackPanel>
+                                                    <Grid.ContextMenu>
+                                                        <ContextMenu>
+                                                            <MenuItem Header="Open" Command="{Binding OpenCommand}" IsEnabled="{Binding CanReveal}"/>
+                                                            <MenuItem Header="Reveal in folder" Command="{Binding RevealCommand}" IsEnabled="{Binding CanReveal}"/>
+                                                        </ContextMenu>
+                                                    </Grid.ContextMenu>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Grid>
+                            </Border>
                         </Panel>
                     </ScrollViewer>
                 </DockPanel>
