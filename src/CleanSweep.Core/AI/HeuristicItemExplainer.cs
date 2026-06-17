@@ -46,7 +46,7 @@ public sealed class HeuristicItemExplainer : IItemExplainer
 
         if (Has(name, "crashdump") || Has(name, ".dmp"))
             return Offline("A crash dump.", RiskLevel.Safe,
-                "Diagnostic snapshot from a crashed program — only useful for debugging that specific crash.",
+                "Diagnostic snapshot from a crashed program - only useful for debugging that specific crash.",
                 "Safe to delete unless you're investigating a crash.");
 
         if (Has(name, "obj") || Has(name, "bin") || Has(name, "target") || Has(name, ".gradle") || Has(name, "build"))
@@ -64,7 +64,7 @@ public sealed class HeuristicItemExplainer : IItemExplainer
             CleanCategory.BrowserCache => Offline("Browser cache.", RiskLevel.Safe, "Cached web content re-downloaded as you browse.", "Safe to delete."),
             CleanCategory.DevJunk      => Offline("Developer build junk.", RiskLevel.Caution, "Rebuildable dependency or output folder.", "Safe to remove; rebuild recreates it."),
             CleanCategory.PackageCache => Offline("Package-manager download cache.", RiskLevel.Safe, "Re-downloaded on the next install.", "Safe to delete."),
-            CleanCategory.LargeFiles   => Offline("A large file.", RiskLevel.Risky, "This is your own data, not system junk — only you know if it matters.", "Review it before deleting; back it up if unsure."),
+            CleanCategory.LargeFiles   => Offline("A large file.", RiskLevel.Risky, "This is your own data, not system junk - only you know if it matters.", "Review it before deleting; back it up if unsure."),
             CleanCategory.Duplicates   => Offline("A duplicate copy.", RiskLevel.Caution, "An identical copy exists elsewhere.", "Keep one copy; removing the others is usually safe."),
             _ => Offline("An item found by the scan.", RiskLevel.Unknown, "CleanSweep couldn't classify this offline.", "Review the path before deleting.")
         };

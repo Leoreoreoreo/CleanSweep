@@ -26,7 +26,7 @@ public sealed class SafeDeleterTests
     public void Ancestor_of_a_protected_directory_is_protected()
     {
         using var tree = new TempTree();
-        var home = tree.Dir("home", "user");          // protect …/home/user
+        var home = tree.Dir("home", "user");          // protect .../home/user
         var deleter = DeleterProtecting(home);
 
         // Deleting the parent would take the protected dir with it.

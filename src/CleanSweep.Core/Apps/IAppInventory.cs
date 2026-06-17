@@ -12,7 +12,7 @@ public interface IAppInventory
 
     /// <summary>
     /// Uninstalls the app. Windows launches its uninstaller; macOS moves the
-    /// bundle and its support files to the Trash. High-risk — confirm first.
+    /// bundle and its support files to the Trash. High-risk - confirm first.
     /// </summary>
     Task<UninstallResult> UninstallAsync(InstalledApp app, CancellationToken ct);
 }

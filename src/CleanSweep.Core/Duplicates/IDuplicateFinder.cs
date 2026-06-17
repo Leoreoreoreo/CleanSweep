@@ -9,7 +9,7 @@ public sealed class DuplicateScanOptions
     /// <summary>How deep below each root to descend.</summary>
     public int MaxDepth { get; init; } = 10;
 
-    /// <summary>Directory names skipped wholesale — huge/system/rebuildable trees.</summary>
+    /// <summary>Directory names skipped wholesale - huge/system/rebuildable trees.</summary>
     public IReadOnlySet<string> SkipDirectoryNames { get; init; } = DefaultSkipDirs;
 
     public static readonly IReadOnlySet<string> DefaultSkipDirs =

@@ -45,7 +45,7 @@
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsExplaining}">
                             <ProgressBar IsIndeterminate="True" Width="90" Height="4" VerticalAlignment="Center"/>
-                            <TextBlock Text="Asking the AI…" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                            <TextBlock Text="Asking the AI..." Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
                         </StackPanel>
                         <StackPanel IsVisible="{Binding HasExplanation}" Spacing="6">
                             <StackPanel Orientation="Horizontal" Spacing="8">
@@ -59,7 +59,7 @@
                                        Foreground="{DynamicResource TextSecondaryBrush}"/>
                             <TextBlock Text="{Binding Explanation.Recommendation}" FontStyle="Italic" TextWrapping="Wrap"
                                        FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <TextBlock Text="Offline answer — add your API key in Settings to enable AI explanations."
+                            <TextBlock Text="Offline answer - add your API key in Settings to enable AI explanations."
                                        IsVisible="{Binding ShowOfflineHint}" Opacity="0.5" FontSize="10"/>
                         </StackPanel>
                     </StackPanel>
@@ -179,7 +179,7 @@
             </ExperimentalAcrylicBorder.Material>
         </ExperimentalAcrylicBorder>
 
-        <!-- Tinted glass sheet over the blurred backdrop — gives the frosted color -->
+        <!-- Tinted glass sheet over the blurred backdrop - gives the frosted color -->
         <Panel Background="{DynamicResource GlassOverlayBrush}" IsHitTestVisible="False"/>
 
         <Grid ColumnDefinitions="236,*">
@@ -297,7 +297,7 @@
                                         VerticalAlignment="Top" Margin="0,80,0,0" Spacing="14">
                                 <Path Data="{StaticResource IconSearch}" Width="56" Height="56" Stretch="Uniform"
                                       HorizontalAlignment="Center" Fill="{DynamicResource TextSecondaryBrush}" Opacity="0.35"/>
-                                <TextBlock Text="No scan results yet — click Smart Scan to begin."
+                                <TextBlock Text="No scan results yet - click Smart Scan to begin."
                                            Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Panel>
@@ -309,7 +309,7 @@
                     <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Large Files" Classes="h1"/>
-                            <TextBlock Text="Big files worth reviewing (≥ 100 MB) — opt in before deleting" FontSize="12"
+                            <TextBlock Text="Big files worth reviewing (≥ 100 MB) - opt in before deleting" FontSize="12"
                                        Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
                         <Button Grid.Column="1" Content="Clean" Classes="accent" FontWeight="Bold" Padding="20,9"
@@ -382,7 +382,7 @@
                     <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Startup Items" Classes="h1"/>
-                            <TextBlock Text="Control what launches at login — disabling is reversible" FontSize="12"
+                            <TextBlock Text="Control what launches at login - disabling is reversible" FontSize="12"
                                        Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
                         <Button Grid.Column="1" Content="List Startup Items" Classes="accent" FontWeight="SemiBold" Padding="16,8"
@@ -434,7 +434,7 @@
                                 <TextBlock Text="AI provider" FontWeight="SemiBold" FontSize="15"
                                            Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
-                                           Text="Use any provider's API key — Anthropic, OpenAI, Gemini, or any OpenAI-compatible endpoint. Without one, CleanSweep uses a built-in offline heuristic. Your key is stored locally on this machine only."/>
+                                           Text="Use any provider's API key - Anthropic, OpenAI, Gemini, or any OpenAI-compatible endpoint. Without one, CleanSweep uses a built-in offline heuristic. Your key is stored locally on this machine only."/>
                                 <ComboBox ItemsSource="{Binding Settings.Providers}" HorizontalAlignment="Stretch"
                                           SelectedIndex="{Binding Settings.SelectedProviderIndex, Mode=TwoWay}"/>
 

@@ -22,9 +22,9 @@ public sealed class ItemExplainerTests
     {
         var h = new HeuristicItemExplainer();
 
-        Assert.Equal(RiskLevel.Caution, h.Explain(Item("node_modules  —  in app", CleanCategory.DevJunk, dir: true)).Risk);
+        Assert.Equal(RiskLevel.Caution, h.Explain(Item("node_modules  -  in app", CleanCategory.DevJunk, dir: true)).Risk);
         Assert.Equal(RiskLevel.Safe, h.Explain(Item("__pycache__", CleanCategory.DevJunk, dir: true)).Risk);
-        Assert.Equal(RiskLevel.Caution, h.Explain(Item("Recycle Bin — 12 item(s)", CleanCategory.Trash, dir: true)).Risk);
+        Assert.Equal(RiskLevel.Caution, h.Explain(Item("Recycle Bin - 12 item(s)", CleanCategory.Trash, dir: true)).Risk);
     }
 
     [Fact]

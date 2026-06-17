@@ -21,7 +21,7 @@ public sealed class DuplicateFinder : IDuplicateFinder
         IEnumerable<string> roots, DuplicateScanOptions options,
         IProgress<string>? progress, CancellationToken ct)
     {
-        // Pass 1 — bucket candidate files by exact size.
+        // Pass 1 - bucket candidate files by exact size.
         var bySize = new Dictionary<long, List<string>>();
         foreach (var root in roots.Where(r => !string.IsNullOrWhiteSpace(r)).Distinct())
         {
@@ -41,13 +41,13 @@ public sealed class DuplicateFinder : IDuplicateFinder
             ct.ThrowIfCancellationRequested();
             if (files.Count < 2) continue;
 
-            // Pass 2 — split each size bucket by partial hash.
+            // Pass 2 - split each size bucket by partial hash.
             foreach (var partialBucket in BucketByHash(files, PartialHashBytes, ct).Values)
             {
                 if (partialBucket.Count < 2) continue;
 
                 // A file no bigger than the partial window is already fully hashed,
-                // so the partial bucket is a confirmed content group — skip pass 3.
+                // so the partial bucket is a confirmed content group - skip pass 3.
                 if (size <= PartialHashBytes)
                 {
                     progress?.Report($"Found {partialBucket.Count} copies of a {size}-byte file");
@@ -55,11 +55,11 @@ public sealed class DuplicateFinder : IDuplicateFinder
                     continue;
                 }
 
-                // Pass 3 — fully hash only the partial-hash collisions.
+                // Pass 3 - fully hash only the partial-hash collisions.
                 foreach (var (hash, dupes) in BucketByHash(partialBucket, long.MaxValue, ct))
                 {
                     if (dupes.Count < 2) continue;
-                    progress?.Report($"Found {dupes.Count} identical files ({hash[..8]}…)");
+                    progress?.Report($"Found {dupes.Count} identical files ({hash[..8]}...)");
                     groups.Add(BuildGroup(hash, size, dupes));
                 }
             }
@@ -147,7 +147,7 @@ public sealed class DuplicateFinder : IDuplicateFinder
                 onFile(file, size);
             }
         }
-        catch { /* unreadable directory — skip its files */ }
+        catch { /* unreadable directory - skip its files */ }
 
         List<string> subs;
         try { subs = Directory.EnumerateDirectories(dir).ToList(); }

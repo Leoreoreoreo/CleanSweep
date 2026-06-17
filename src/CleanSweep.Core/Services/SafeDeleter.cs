@@ -12,7 +12,7 @@ public sealed class DeleteOutcome
 }
 
 /// <summary>
-/// Deletes items, refusing any path that is — or contains — a protected
+/// Deletes items, refusing any path that is - or contains - a protected
 /// location. This is the last line of defence regardless of what a scan returns.
 /// </summary>
 public sealed class SafeDeleter

@@ -38,7 +38,7 @@ public sealed class RecycleBinModule : ICleanupModule
             result.Items.Add(new CleanItem
             {
                 Path = Sentinels.RecycleBin,
-                DisplayName = $"Recycle Bin — {count} item(s)",
+                DisplayName = $"Recycle Bin - {count} item(s)",
                 SizeBytes = size,
                 Category = Category,
                 IsDirectory = true,

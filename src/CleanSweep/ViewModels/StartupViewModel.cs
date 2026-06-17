@@ -28,7 +28,7 @@ public partial class StartupViewModel : ViewModelBase
         _manager = manager;
         _dialogs = dialogs;
         _statusText = _manager.IsSupported
-            ? "Review what launches at login. Disabling is reversible — prefer it over removing."
+            ? "Review what launches at login. Disabling is reversible - prefer it over removing."
             : "Startup management isn't supported on this OS.";
     }
 
@@ -42,7 +42,7 @@ public partial class StartupViewModel : ViewModelBase
         _cts = new CancellationTokenSource();
         try
         {
-            StatusText = "Reading startup items…";
+            StatusText = "Reading startup items...";
             var items = await _manager.ListAsync(_cts.Token);
             foreach (var item in items) Items.Add(new StartupItemViewModel(item, this));
             OnPropertyChanged(nameof(HasItems));
@@ -58,7 +58,7 @@ public partial class StartupViewModel : ViewModelBase
         if (IsBusy) return;
         bool enable = !item.IsEnabled;
 
-        // Disabling is reversible; removing a login item is not — confirm that case.
+        // Disabling is reversible; removing a login item is not - confirm that case.
         if (!enable && item.Model.Kind == StartupKind.LoginItem)
         {
             bool ok = await _dialogs.ConfirmAsync(
@@ -94,7 +94,7 @@ public partial class StartupItemViewModel : ObservableObject
     public string Name => Model.Name;
     public string Command => Model.Command ?? "";
     public bool IsEnabled => Model.IsEnabled;
-    public string StateText => Model.IsEnabled ? "● Enabled" : "○ Disabled";
+    public string StateText => Model.IsEnabled ? "Enabled" : "Disabled";
     public string KindLabel => Model.KindLabel;
     public string ScopeLabel => Model.ScopeLabel;
     public string ToggleLabel => Model.IsEnabled

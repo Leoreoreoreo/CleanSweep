@@ -44,7 +44,7 @@ public sealed class WindowsPaths : IPlatformPaths
         Path.Combine(Local, "BraveSoftware", "Brave-Browser", "User Data", "Default", "Cache"),
     });
 
-    // Pure download caches only — these refill harmlessly. Restore stores like
+    // Pure download caches only - these refill harmlessly. Restore stores like
     // .nuget\packages are intentionally excluded to avoid surprising re-downloads.
     public IEnumerable<string> PackageCacheDirectories => Clean(new[]
     {

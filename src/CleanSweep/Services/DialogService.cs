@@ -18,7 +18,7 @@ public sealed class DialogService : IDialogService
     public async Task<bool> ConfirmAsync(string title, string message, string confirmText = "OK", bool destructive = false)
     {
         var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
-        if (owner is null) return false; // no UI (e.g. design time) — never auto-confirm a destructive action
+        if (owner is null) return false; // no UI (e.g. design time) - never auto-confirm a destructive action
         return await new ConfirmWindow(title, message, confirmText, destructive).ShowDialog<bool>(owner);
     }
 }

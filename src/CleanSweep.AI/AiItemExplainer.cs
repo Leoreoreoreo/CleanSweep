@@ -14,7 +14,7 @@ namespace CleanSweep.AI;
 /// <summary>
 /// Explains scan items using whichever AI provider is configured: the official
 /// Anthropic SDK (Claude) or any OpenAI-compatible endpoint (OpenAI, Gemini,
-/// Groq, OpenRouter, local servers, …). Degrades gracefully to an offline
+/// Groq, OpenRouter, local servers, ...). Degrades gracefully to an offline
 /// heuristic with no key or on any error; results are cached in-memory.
 /// </summary>
 public sealed class AiItemExplainer : IItemExplainer
@@ -89,7 +89,7 @@ public sealed class AiItemExplainer : IItemExplainer
         return Parse(text);
     }
 
-    // ---- OpenAI-compatible (OpenAI / Gemini / Groq / OpenRouter / local …) ----
+    // ---- OpenAI-compatible (OpenAI / Gemini / Groq / OpenRouter / local ...) ----
 
     private async Task<ItemExplanation> CallOpenAiCompatibleAsync(CleanItem item, CancellationToken ct)
     {
@@ -168,8 +168,8 @@ public sealed class AiItemExplainer : IItemExplainer
     private static string CacheKey(CleanItem item)
     {
         var name = item.DisplayName;
-        int dash = name.IndexOf('—');
-        if (dash > 0) name = name[..dash];
+        int paren = name.IndexOf(" (", StringComparison.Ordinal);
+        if (paren > 0) name = name[..paren];
         return $"{(int)item.Category}|{name.Trim().ToLowerInvariant()}";
     }
 

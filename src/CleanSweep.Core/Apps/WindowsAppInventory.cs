@@ -47,10 +47,10 @@ public sealed class WindowsAppInventory : IAppInventory
                     var app = Parse(key, source);
                     if (app is not null && !into.ContainsKey(app.Name)) into[app.Name] = app;
                 }
-                catch { /* unreadable entry — skip */ }
+                catch { /* unreadable entry - skip */ }
             }
         }
-        catch { /* hive/key unavailable — skip */ }
+        catch { /* hive/key unavailable - skip */ }
     }
 
     private static InstalledApp? Parse(RegistryKey key, string source)

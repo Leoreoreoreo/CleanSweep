@@ -29,7 +29,7 @@ public sealed class SettingsStore
             if (File.Exists(SettingsPath))
                 return JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(SettingsPath)) ?? new AppSettings();
         }
-        catch { /* corrupt/unreadable — start fresh */ }
+        catch { /* corrupt/unreadable - start fresh */ }
         return new AppSettings();
     }
 

@@ -30,7 +30,7 @@ checkbox:
 | Log files | Diagnostic logs that are safe to clear |
 | Trash / Recycle Bin | Windows Recycle Bin (Shell API) or macOS `~/.Trash` |
 | Browser caches | Chrome / Edge / Brave cache (Windows) |
-| Developer junk | `node_modules`, `__pycache__`, `bin`/`obj`, `target`, `.gradle`, … (opt-in) |
+| Developer junk | `node_modules`, `__pycache__`, `bin`/`obj`, `target`, `.gradle`, ... (opt-in) |
 | Package caches | npm / pip / NuGet / Yarn download caches |
 | Large files | Files of 100 MB or more under your dev roots and Downloads (opt-in) |
 

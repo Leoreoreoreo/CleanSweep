@@ -76,7 +76,7 @@ public sealed class MacStartupManager : IStartupManager
                 if (key.Value == "Label" && key.ElementsAfterSelf().FirstOrDefault() is { } v)
                     return v.Value;
         }
-        catch { /* binary plist or unreadable — caller falls back to the filename */ }
+        catch { /* binary plist or unreadable - caller falls back to the filename */ }
         return null;
     }
 
@@ -125,7 +125,7 @@ public sealed class MacStartupManager : IStartupManager
     private static StartupActionResult SetLoginItemEnabled(StartupItem item, bool enabled)
     {
         if (enabled)
-            return Fail("Login items can't be re-enabled automatically — re-add it from System Settings.");
+            return Fail("Login items can't be re-enabled automatically - re-add it from System Settings.");
 
         var escaped = item.Location.Replace("\"", "\\\"");
         RunOsa($"tell application \"System Events\" to delete login item \"{escaped}\"", out int exit);

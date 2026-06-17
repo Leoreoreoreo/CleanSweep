@@ -21,7 +21,7 @@ public sealed partial class MacMemoryManager : IMemoryManager
     public MemoryFreeResult Free(IProgress<string>? progress)
     {
         var before = GetStatus();
-        progress?.Report("Running purge to free inactive memory…");
+        progress?.Report("Running purge to free inactive memory...");
         bool ok = RunPurge();
         var after = GetStatus();
         return new MemoryFreeResult

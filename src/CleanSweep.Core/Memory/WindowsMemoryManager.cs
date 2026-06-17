@@ -57,7 +57,7 @@ public sealed class WindowsMemoryManager : IMemoryManager
             }
             catch
             {
-                // protected / exited process — skip
+                // protected / exited process - skip
             }
             finally
             {

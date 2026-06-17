@@ -37,7 +37,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty] private bool _isBusy;
     [ObservableProperty] private bool _hasResults;
-    [ObservableProperty] private string _statusText = "Ready — click Smart Scan to find reclaimable space.";
+    [ObservableProperty] private string _statusText = "Ready - click Smart Scan to find reclaimable space.";
     [ObservableProperty] private long _totalReclaimable;
     [ObservableProperty] private long _selectedBytes;
 
@@ -106,7 +106,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         try
         {
-            StatusText = "Scanning…";
+            StatusText = "Scanning...";
             var results = await _engine.ScanAsync(progress, _cts.Token);
             foreach (var result in results)
             {
@@ -121,7 +121,7 @@ public partial class MainWindowViewModel : ViewModelBase
             OnPropertyChanged(nameof(HasLargeFiles));
             StatusText = HasResults
                 ? $"Found {ByteSize.Human(TotalReclaimable)} of reclaimable space across {Categories.Count} categories."
-                : "All clean — nothing to reclaim.";
+                : "All clean - nothing to reclaim.";
         }
         catch (OperationCanceledException) { StatusText = "Scan cancelled."; }
         catch (Exception ex) { StatusText = $"Scan failed: {ex.Message}"; }
@@ -165,7 +165,7 @@ public partial class MainWindowViewModel : ViewModelBase
         var result = _memory.Free(progress);
         RefreshMemory();
         StatusText = result.Succeeded
-            ? $"{result.Message}  Reclaimed ≈ {ByteSize.Human(result.FreedBytes)}."
+            ? $"{result.Message}  Reclaimed ~{ByteSize.Human(result.FreedBytes)}."
             : result.Message;
     }
 

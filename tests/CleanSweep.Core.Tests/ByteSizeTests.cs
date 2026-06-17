@@ -28,7 +28,7 @@ public sealed class ByteSizeTests
     [Fact]
     public void Human_rounds_to_two_decimals()
     {
-        // 1234 B = 1.205078… KB -> "1.21 KB"
+        // 1234 B = 1.205078... KB -> "1.21 KB"
         Assert.Equal("1.21 KB", ByteSize.Human(1234));
     }
 

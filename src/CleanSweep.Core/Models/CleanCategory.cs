@@ -51,7 +51,7 @@ public static class CleanCategoryExtensions
         CleanCategory.Logs         => "Diagnostic logs that are safe to clear.",
         CleanCategory.Trash        => "Items waiting in the trash / recycle bin.",
         CleanCategory.BrowserCache => "Cached web content from your browsers.",
-        CleanCategory.DevJunk      => "Build output and dependency folders (node_modules, __pycache__, bin/obj…).",
+        CleanCategory.DevJunk      => "Build output and dependency folders (node_modules, __pycache__, bin/obj...).",
         CleanCategory.PackageCache => "Download caches for npm, pip, NuGet and friends.",
         CleanCategory.LargeFiles   => "Big files you may have forgotten about (review before deleting).",
         CleanCategory.Duplicates   => "Identical files found in more than one place (keep one, remove the rest).",

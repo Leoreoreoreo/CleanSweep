@@ -79,7 +79,7 @@ public sealed class CleanupModuleTests
         var nodeModules = result.Items.Single(i => i.DisplayName.StartsWith("node_modules"));
         Assert.Equal(6000, nodeModules.SizeBytes);   // 5000 + 1000 nested, counted as one
         Assert.True(nodeModules.IsDirectory);
-        Assert.Contains("app", nodeModules.DisplayName); // "node_modules  —  in app"
+        Assert.Contains("app", nodeModules.DisplayName); // "node_modules  -  in app"
 
         Assert.Contains(result.Items, i => i.DisplayName.StartsWith("obj") && i.SizeBytes == 1500);
 

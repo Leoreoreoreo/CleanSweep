@@ -55,7 +55,7 @@ public sealed class DevJunkModule : ICleanupModule
                     result.Items.Add(new CleanItem
                     {
                         Path = sub,
-                        DisplayName = $"{name}  —  in {ParentName(sub)}",
+                        DisplayName = $"{name} (in {ParentName(sub)})",
                         SizeBytes = size,
                         Category = Category,
                         IsDirectory = true,

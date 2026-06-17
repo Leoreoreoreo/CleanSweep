@@ -30,7 +30,7 @@ public partial class SettingsViewModel : ViewModelBase
     public string KeyLabel => $"{Current.DisplayName} API key";
     public string ModelHint => string.IsNullOrEmpty(Current.DefaultModel)
         ? $"e.g. {Current.ModelHint}"
-        : $"default: {Current.DefaultModel} — e.g. {Current.ModelHint}";
+        : $"default: {Current.DefaultModel} - e.g. {Current.ModelHint}";
     public bool ShowBaseUrl => Current.BaseUrlEditable;
 
     public SettingsViewModel(AiItemExplainer explainer, SettingsStore store)
@@ -70,8 +70,8 @@ public partial class SettingsViewModel : ViewModelBase
         _explainer.Configure(BuildSettings());
         OnPropertyChanged(nameof(IsAiEnabled));
         StatusText = _explainer.IsAiEnabled
-            ? $"Saved — {Current.DisplayName} explanations are on."
-            : "Saved — enter an API key above to turn on AI explanations.";
+            ? $"Saved - {Current.DisplayName} explanations are on."
+            : "Saved - enter an API key above to turn on AI explanations.";
     }
 
     [RelayCommand]
@@ -106,7 +106,7 @@ public partial class SettingsViewModel : ViewModelBase
 
     private void UpdateStatus() => StatusText = _explainer.IsAiEnabled
         ? "AI explanations are on."
-        : "AI explanations are off — choose a provider and paste your API key below.";
+        : "AI explanations are off - choose a provider and paste your API key below.";
 
     private static int IndexOf(AiProvider provider)
     {

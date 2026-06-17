@@ -15,10 +15,10 @@ public sealed class InstalledApp
     /// <summary>Windows: the uninstall command line. macOS: the .app bundle path.</summary>
     public required string UninstallTarget { get; init; }
 
-    /// <summary>Where it came from — for display/grouping (e.g. "HKLM", "/Applications").</summary>
+    /// <summary>Where it came from - for display/grouping (e.g. "HKLM", "/Applications").</summary>
     public string Source { get; init; } = string.Empty;
 
-    public string SizeText => SizeBytes > 0 ? ByteSize.Human(SizeBytes) : "—";
+    public string SizeText => SizeBytes > 0 ? ByteSize.Human(SizeBytes) : "-";
 }
 
 /// <summary>Outcome of an uninstall request.</summary>

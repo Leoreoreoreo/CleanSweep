@@ -55,7 +55,7 @@ public partial class DuplicatesViewModel : ViewModelBase
 
         try
         {
-            StatusText = "Scanning for duplicates…";
+            StatusText = "Scanning for duplicates...";
             var progress = new Progress<string>(s => StatusText = s);
             var roots = _paths.DevSearchRoots.Append(Path.Combine(_paths.HomeDirectory, "Downloads"));
             var groups = await _finder.FindAsync(roots, new DuplicateScanOptions(), progress, _cts.Token);
@@ -96,7 +96,7 @@ public partial class DuplicatesViewModel : ViewModelBase
 
         if (toDelete.Count == 0)
         {
-            StatusText = "Select the duplicate copies to remove — one copy in each group is always kept.";
+            StatusText = "Select the duplicate copies to remove - one copy in each group is always kept.";
             return;
         }
 

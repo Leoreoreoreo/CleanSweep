@@ -44,7 +44,7 @@ public partial class AppsViewModel : ViewModelBase
         _cts = new CancellationTokenSource();
         try
         {
-            StatusText = "Reading installed applications…";
+            StatusText = "Reading installed applications...";
             var apps = await _inventory.ListAsync(_cts.Token);
             foreach (var app in apps) Apps.Add(new AppViewModel(app, this));
             OnPropertyChanged(nameof(HasApps));

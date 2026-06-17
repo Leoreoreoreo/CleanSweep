@@ -5,13 +5,13 @@
 *.sh   text eol=lf
 *.ps1  text eol=crlf
 
-# C#/XAML source — LF in repo, native on checkout.
+# C#/XAML source - LF in repo, native on checkout.
 *.cs    text
 *.axaml text
 *.csproj text
 *.slnx  text
 
-# Binary assets — never touch.
+# Binary assets - never touch.
 *.ico  binary
 *.png  binary
 *.icns binary

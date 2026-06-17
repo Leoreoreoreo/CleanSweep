@@ -32,7 +32,7 @@ public sealed class FileSystemScanner
             }
             catch
             {
-                // unreadable entry — skip
+                // unreadable entry - skip
             }
             if (entry is not null) yield return entry;
         }
@@ -77,7 +77,7 @@ public sealed class FileSystemScanner
             }
             catch
             {
-                // unreadable directory — skip its subtree
+                // unreadable directory - skip its subtree
             }
         }
         return total;
