@@ -10,7 +10,8 @@ public enum CleanCategory
     BrowserCache,
     DevJunk,
     PackageCache,
-    LargeFiles
+    LargeFiles,
+    Duplicates
 }
 
 public static class CleanCategoryExtensions
@@ -25,6 +26,7 @@ public static class CleanCategoryExtensions
         CleanCategory.DevJunk      => "Developer Junk",
         CleanCategory.PackageCache => "Package Caches",
         CleanCategory.LargeFiles   => "Large & Old Files",
+        CleanCategory.Duplicates   => "Duplicate Files",
         _ => c.ToString()
     };
 
@@ -38,6 +40,7 @@ public static class CleanCategoryExtensions
         CleanCategory.DevJunk      => "\U0001F6E0", // hammer+wrench
         CleanCategory.PackageCache => "\U0001F4DA", // books
         CleanCategory.LargeFiles   => "\U0001F4C2", // open folder
+        CleanCategory.Duplicates   => "\U0001F46F", // twins / duplicate
         _ => "•"
     };
 
@@ -51,6 +54,7 @@ public static class CleanCategoryExtensions
         CleanCategory.DevJunk      => "Build output and dependency folders (node_modules, __pycache__, bin/obj…).",
         CleanCategory.PackageCache => "Download caches for npm, pip, NuGet and friends.",
         CleanCategory.LargeFiles   => "Big files you may have forgotten about (review before deleting).",
+        CleanCategory.Duplicates   => "Identical files found in more than one place (keep one, remove the rest).",
         _ => string.Empty
     };
 
@@ -60,6 +64,7 @@ public static class CleanCategoryExtensions
     {
         CleanCategory.LargeFiles => false,
         CleanCategory.DevJunk    => false,
+        CleanCategory.Duplicates => false,
         _ => true
     };
 }

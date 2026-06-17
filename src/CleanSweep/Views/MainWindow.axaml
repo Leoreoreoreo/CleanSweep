@@ -3,12 +3,12 @@
         xmlns:vm="using:CleanSweep.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="860" d:DesignHeight="660"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="680"
         x:Class="CleanSweep.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="CleanSweep" Width="860" Height="660"
-        MinWidth="660" MinHeight="500">
+        Title="CleanSweep" Width="900" Height="680"
+        MinWidth="720" MinHeight="540">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
@@ -25,100 +25,252 @@
             </StackPanel>
         </Border>
 
-        <!-- Memory card -->
-        <Border DockPanel.Dock="Top" Margin="16,16,16,0" Padding="16"
-                CornerRadius="10" Background="#14808080" BorderBrush="#28808080" BorderThickness="1">
-            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding MemoryText}" FontWeight="SemiBold"/>
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding MemoryDetail}"
-                           Opacity="0.7" FontSize="12" Margin="0,2,0,6"/>
-                <ProgressBar Grid.Row="2" Grid.Column="0" Height="6" Minimum="0" Maximum="100"
-                             Value="{Binding MemoryUsedPercent}"/>
-                <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Content="Free Up RAM"
-                        Command="{Binding FreeMemoryCommand}" VerticalAlignment="Center" Margin="14,0,0,0"/>
-            </Grid>
-        </Border>
+        <TabControl Padding="0">
 
-        <!-- Action bar -->
-        <Grid DockPanel.Dock="Top" Margin="16,14,16,4" ColumnDefinitions="Auto,Auto,*,Auto">
-            <Button Grid.Column="0" Content="🔍  Smart Scan" Classes="accent" FontWeight="SemiBold"
-                    Padding="18,9" Command="{Binding ScanCommand}" IsEnabled="{Binding !IsBusy}"/>
-            <Button Grid.Column="1" Content="Cancel" Margin="8,0,0,0"
-                    Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}"/>
-            <ProgressBar Grid.Column="3" IsIndeterminate="True" Width="120" Height="4"
-                         VerticalAlignment="Center" IsVisible="{Binding IsBusy}"/>
-        </Grid>
+            <!-- ============ Smart Scan ============ -->
+            <TabItem Header="🔍 Smart Scan">
+                <DockPanel LastChildFill="True">
 
-        <!-- Footer -->
-        <Border DockPanel.Dock="Bottom" Padding="16,12" Background="#14808080"
-                BorderBrush="#28808080" BorderThickness="0,1,0,0">
-            <Grid ColumnDefinitions="*,Auto">
-                <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding StatusText}" TextWrapping="Wrap"/>
-                    <TextBlock Margin="0,3,0,0" FontSize="12" Opacity="0.75">
-                        <Run Text="Selected:"/>
-                        <Run Text="{Binding SelectedText}" FontWeight="SemiBold"/>
-                        <Run Text="  of  "/>
-                        <Run Text="{Binding TotalReclaimableText}"/>
-                        <Run Text="reclaimable"/>
-                    </TextBlock>
-                </StackPanel>
-                <Button Grid.Column="1" Content="🧹  Clean" Classes="accent" FontWeight="Bold"
-                        Padding="22,10" Command="{Binding CleanCommand}" IsEnabled="{Binding HasResults}"/>
-            </Grid>
-        </Border>
+                    <!-- Memory card -->
+                    <Border DockPanel.Dock="Top" Margin="16,16,16,0" Padding="16"
+                            CornerRadius="10" Background="#14808080" BorderBrush="#28808080" BorderThickness="1">
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding MemoryText}" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding MemoryDetail}"
+                                       Opacity="0.7" FontSize="12" Margin="0,2,0,6"/>
+                            <ProgressBar Grid.Row="2" Grid.Column="0" Height="6" Minimum="0" Maximum="100"
+                                         Value="{Binding MemoryUsedPercent}"/>
+                            <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Content="Free Up RAM"
+                                    Command="{Binding FreeMemoryCommand}" VerticalAlignment="Center" Margin="14,0,0,0"/>
+                        </Grid>
+                    </Border>
 
-        <!-- Categories -->
-        <ScrollViewer Padding="16,8">
-            <Panel>
-                <ItemsControl ItemsSource="{Binding Categories}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="vm:CategoryViewModel">
-                            <Expander Margin="0,0,0,8" IsExpanded="{Binding IsExpanded}"
-                                      HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                                <Expander.Header>
-                                    <Grid ColumnDefinitions="Auto,Auto,*,Auto" MinWidth="560">
-                                        <CheckBox Grid.Column="0" IsThreeState="True"
-                                                  IsChecked="{Binding AllSelected, Mode=TwoWay}" VerticalAlignment="Center"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding Glyph}" FontSize="20"
-                                                   VerticalAlignment="Center" Margin="2,0,0,0"/>
-                                        <StackPanel Grid.Column="2" Margin="10,0,0,0" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
-                                            <TextBlock Text="{Binding Description}" FontSize="11" Opacity="0.6"
-                                                       TextTrimming="CharacterEllipsis"/>
-                                        </StackPanel>
-                                        <TextBlock Grid.Column="3" Text="{Binding Summary}" VerticalAlignment="Center"
-                                                   Opacity="0.85" Margin="8,0,12,0"/>
-                                    </Grid>
-                                </Expander.Header>
+                    <!-- Action bar -->
+                    <Grid DockPanel.Dock="Top" Margin="16,14,16,4" ColumnDefinitions="Auto,Auto,*,Auto">
+                        <Button Grid.Column="0" Content="🔍  Smart Scan" Classes="accent" FontWeight="SemiBold"
+                                Padding="18,9" Command="{Binding ScanCommand}" IsEnabled="{Binding !IsBusy}"/>
+                        <Button Grid.Column="1" Content="Cancel" Margin="8,0,0,0"
+                                Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}"/>
+                        <ProgressBar Grid.Column="3" IsIndeterminate="True" Width="120" Height="4"
+                                     VerticalAlignment="Center" IsVisible="{Binding IsBusy}"/>
+                    </Grid>
 
-                                <ItemsControl ItemsSource="{Binding Items}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate x:DataType="vm:CleanItemViewModel">
-                                            <Grid ColumnDefinitions="Auto,*,Auto" Margin="20,3,8,3">
-                                                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                                          VerticalAlignment="Center"/>
-                                                <StackPanel Grid.Column="1" Margin="4,0,0,0" VerticalAlignment="Center">
-                                                    <TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis"/>
-                                                    <TextBlock Text="{Binding Path}" FontSize="10" Opacity="0.45"
-                                                               TextTrimming="CharacterEllipsis"/>
+                    <!-- Footer -->
+                    <Border DockPanel.Dock="Bottom" Padding="16,12" Background="#14808080"
+                            BorderBrush="#28808080" BorderThickness="0,1,0,0">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding StatusText}" TextWrapping="Wrap"/>
+                                <TextBlock Margin="0,3,0,0" FontSize="12" Opacity="0.75">
+                                    <Run Text="Selected:"/>
+                                    <Run Text="{Binding SelectedText}" FontWeight="SemiBold"/>
+                                    <Run Text="  of  "/>
+                                    <Run Text="{Binding TotalReclaimableText}"/>
+                                    <Run Text="reclaimable"/>
+                                </TextBlock>
+                            </StackPanel>
+                            <Button Grid.Column="1" Content="🧹  Clean" Classes="accent" FontWeight="Bold"
+                                    Padding="22,10" Command="{Binding CleanCommand}" IsEnabled="{Binding HasResults}"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Categories -->
+                    <ScrollViewer Padding="16,8">
+                        <Panel>
+                            <ItemsControl ItemsSource="{Binding Categories}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:CategoryViewModel">
+                                        <Expander Margin="0,0,0,8" IsExpanded="{Binding IsExpanded}"
+                                                  HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                            <Expander.Header>
+                                                <Grid ColumnDefinitions="Auto,Auto,*,Auto" MinWidth="560">
+                                                    <CheckBox Grid.Column="0" IsThreeState="True"
+                                                              IsChecked="{Binding AllSelected, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Glyph}" FontSize="20"
+                                                               VerticalAlignment="Center" Margin="2,0,0,0"/>
+                                                    <StackPanel Grid.Column="2" Margin="10,0,0,0" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                                        <TextBlock Text="{Binding Description}" FontSize="11" Opacity="0.6"
+                                                                   TextTrimming="CharacterEllipsis"/>
+                                                    </StackPanel>
+                                                    <TextBlock Grid.Column="3" Text="{Binding Summary}" VerticalAlignment="Center"
+                                                               Opacity="0.85" Margin="8,0,12,0"/>
+                                                </Grid>
+                                            </Expander.Header>
+
+                                            <ItemsControl ItemsSource="{Binding Items}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate x:DataType="vm:CleanItemViewModel">
+                                                        <Grid ColumnDefinitions="Auto,*,Auto" Margin="20,3,8,3">
+                                                            <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                                      VerticalAlignment="Center"/>
+                                                            <StackPanel Grid.Column="1" Margin="4,0,0,0" VerticalAlignment="Center">
+                                                                <TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis"/>
+                                                                <TextBlock Text="{Binding Path}" FontSize="10" Opacity="0.45"
+                                                                           TextTrimming="CharacterEllipsis"/>
+                                                            </StackPanel>
+                                                            <TextBlock Grid.Column="2" Text="{Binding SizeText}" VerticalAlignment="Center"
+                                                                       Opacity="0.85" Margin="8,0,0,0" FontFamily="Consolas,monospace"/>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Expander>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <TextBlock Text="No scan results yet — click Smart Scan above to begin."
+                                       IsVisible="{Binding !HasResults}" Opacity="0.5"
+                                       HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,60,0,0"/>
+                        </Panel>
+                    </ScrollViewer>
+                </DockPanel>
+            </TabItem>
+
+            <!-- ============ Duplicates ============ -->
+            <TabItem Header="👯 Duplicates">
+                <DockPanel Margin="16" LastChildFill="True">
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,10">
+                        <Button Content="🔍  Find Duplicates" Classes="accent" FontWeight="SemiBold" Padding="16,8"
+                                Command="{Binding Duplicates.ScanCommand}" IsEnabled="{Binding !Duplicates.IsBusy}"/>
+                        <Button Content="Cancel" Command="{Binding Duplicates.CancelCommand}" IsVisible="{Binding Duplicates.IsBusy}"/>
+                        <Button Content="🗑  Delete selected" Classes="danger"
+                                Command="{Binding Duplicates.DeleteSelectedCommand}" IsEnabled="{Binding Duplicates.HasGroups}"/>
+                        <ProgressBar IsIndeterminate="True" Width="110" Height="4" VerticalAlignment="Center"
+                                     IsVisible="{Binding Duplicates.IsBusy}"/>
+                    </StackPanel>
+
+                    <Border DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                        <TextBlock Text="{Binding Duplicates.StatusText}" TextWrapping="Wrap" Opacity="0.85"/>
+                    </Border>
+
+                    <ScrollViewer>
+                        <ItemsControl ItemsSource="{Binding Duplicates.Groups}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:DuplicateGroupViewModel">
+                                    <Expander Margin="0,0,0,8" IsExpanded="{Binding IsExpanded}"
+                                              HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                        <Expander.Header>
+                                            <Grid ColumnDefinitions="*,Auto" MinWidth="560">
+                                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding Header}" FontSize="11" Opacity="0.6"/>
                                                 </StackPanel>
-                                                <TextBlock Grid.Column="2" Text="{Binding SizeText}" VerticalAlignment="Center"
-                                                           Opacity="0.85" Margin="8,0,0,0" FontFamily="Consolas,monospace"/>
+                                                <Button Grid.Column="1" Content="Select extras"
+                                                        Command="{Binding SelectExtrasCommand}" Margin="8,0,12,0"/>
                                             </Grid>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </Expander>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                                        </Expander.Header>
+                                        <ItemsControl ItemsSource="{Binding Files}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate x:DataType="vm:DuplicateFileViewModel">
+                                                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" Margin="20,3,8,3">
+                                                        <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                                  VerticalAlignment="Center"/>
+                                                        <StackPanel Grid.Column="1" Margin="4,0,0,0" VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis"/>
+                                                            <TextBlock Text="{Binding Path}" FontSize="10" Opacity="0.45"
+                                                                       TextTrimming="CharacterEllipsis"/>
+                                                        </StackPanel>
+                                                        <TextBlock Grid.Column="2" Text="{Binding ModifiedText}" Opacity="0.55"
+                                                                   VerticalAlignment="Center" Margin="8,0,8,0" FontSize="11"/>
+                                                        <TextBlock Grid.Column="3" Text="{Binding SizeText}" VerticalAlignment="Center"
+                                                                   FontFamily="Consolas,monospace" Opacity="0.85"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Expander>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>
+            </TabItem>
 
-                <TextBlock Text="No scan results yet — click Smart Scan above to begin."
-                           IsVisible="{Binding !HasResults}" Opacity="0.5"
-                           HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,60,0,0"/>
-            </Panel>
-        </ScrollViewer>
+            <!-- ============ Apps ============ -->
+            <TabItem Header="📦 Apps">
+                <DockPanel Margin="16" LastChildFill="True">
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,10">
+                        <Button Content="↻  List Applications" Classes="accent" FontWeight="SemiBold" Padding="16,8"
+                                Command="{Binding Apps.LoadCommand}" IsEnabled="{Binding !Apps.IsBusy}"/>
+                        <ProgressBar IsIndeterminate="True" Width="110" Height="4" VerticalAlignment="Center"
+                                     IsVisible="{Binding Apps.IsBusy}"/>
+                    </StackPanel>
 
+                    <Border DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                        <TextBlock Text="{Binding Apps.StatusText}" TextWrapping="Wrap" Opacity="0.85"/>
+                    </Border>
+
+                    <ScrollViewer>
+                        <ItemsControl ItemsSource="{Binding Apps.Apps}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:AppViewModel">
+                                    <Border Margin="0,0,0,6" Padding="12,9" CornerRadius="8"
+                                            Background="#14808080" BorderBrush="#22808080" BorderThickness="1">
+                                        <Grid ColumnDefinitions="*,Auto,Auto">
+                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock FontSize="11" Opacity="0.6">
+                                                    <Run Text="{Binding Publisher}"/><Run Text="   "/><Run Text="{Binding Version}"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="1" Text="{Binding SizeText}" VerticalAlignment="Center"
+                                                       Margin="8,0,12,0" FontFamily="Consolas,monospace" Opacity="0.85"/>
+                                            <Button Grid.Column="2" Content="Uninstall" Classes="danger"
+                                                    Command="{Binding UninstallCommand}" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>
+            </TabItem>
+
+            <!-- ============ Startup ============ -->
+            <TabItem Header="🚀 Startup">
+                <DockPanel Margin="16" LastChildFill="True">
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,10">
+                        <Button Content="↻  List Startup Items" Classes="accent" FontWeight="SemiBold" Padding="16,8"
+                                Command="{Binding Startup.LoadCommand}" IsEnabled="{Binding !Startup.IsBusy}"/>
+                        <ProgressBar IsIndeterminate="True" Width="110" Height="4" VerticalAlignment="Center"
+                                     IsVisible="{Binding Startup.IsBusy}"/>
+                    </StackPanel>
+
+                    <Border DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                        <TextBlock Text="{Binding Startup.StatusText}" TextWrapping="Wrap" Opacity="0.85"/>
+                    </Border>
+
+                    <ScrollViewer>
+                        <ItemsControl ItemsSource="{Binding Startup.Items}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:StartupItemViewModel">
+                                    <Border Margin="0,0,0,6" Padding="12,9" CornerRadius="8"
+                                            Background="#14808080" BorderBrush="#22808080" BorderThickness="1">
+                                        <Grid ColumnDefinitions="*,Auto,Auto">
+                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding Command}" FontSize="10" Opacity="0.45"
+                                                           TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,12,0">
+                                                <TextBlock Text="{Binding StateText}" FontSize="11" Opacity="0.75"/>
+                                                <TextBlock FontSize="10" Opacity="0.55">
+                                                    <Run Text="{Binding KindLabel}"/><Run Text="  ·  "/><Run Text="{Binding ScopeLabel}"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <Button Grid.Column="2" Content="{Binding ToggleLabel}"
+                                                    Command="{Binding ToggleCommand}" VerticalAlignment="Center" MinWidth="84"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>
+            </TabItem>
+
+        </TabControl>
     </DockPanel>
 </Window>

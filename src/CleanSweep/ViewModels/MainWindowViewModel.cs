@@ -7,9 +7,13 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CleanSweep.Core;
+using CleanSweep.Core.Apps;
 using CleanSweep.Core.Cleaning;
 using CleanSweep.Core.Memory;
+using CleanSweep.Core.Platform;
 using CleanSweep.Core.Services;
+using CleanSweep.Core.Startup;
+using CleanSweep.Services;
 
 namespace CleanSweep.ViewModels;
 
@@ -20,6 +24,11 @@ public partial class MainWindowViewModel : ViewModelBase
     private CancellationTokenSource? _cts;
 
     public ObservableCollection<CategoryViewModel> Categories { get; } = new();
+
+    /// <summary>Phase 3 capabilities, each its own section.</summary>
+    public DuplicatesViewModel Duplicates { get; }
+    public AppsViewModel Apps { get; }
+    public StartupViewModel Startup { get; }
 
     [ObservableProperty] private bool _isBusy;
     [ObservableProperty] private bool _hasResults;
@@ -34,7 +43,15 @@ public partial class MainWindowViewModel : ViewModelBase
     public string TotalReclaimableText => ByteSize.Human(TotalReclaimable);
     public string SelectedText => ByteSize.Human(SelectedBytes);
 
-    public MainWindowViewModel() => RefreshMemory();
+    public MainWindowViewModel() : this(new DialogService()) { }
+
+    public MainWindowViewModel(IDialogService dialogs)
+    {
+        Duplicates = new DuplicatesViewModel(_engine, PlatformPaths.Current, dialogs);
+        Apps = new AppsViewModel(AppInventory.Create(), dialogs);
+        Startup = new StartupViewModel(StartupManager.Create(), dialogs);
+        RefreshMemory();
+    }
 
     partial void OnTotalReclaimableChanged(long value) => OnPropertyChanged(nameof(TotalReclaimableText));
     partial void OnSelectedBytesChanged(long value) => OnPropertyChanged(nameof(SelectedText));
