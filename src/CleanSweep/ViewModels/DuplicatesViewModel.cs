@@ -55,6 +55,7 @@ public partial class DuplicatesViewModel : ViewModelBase
         Groups.Clear();
         SelectedBytes = 0;
         OnPropertyChanged(nameof(HasGroups));
+        _cts?.Dispose();
         _cts = new CancellationTokenSource();
 
         try
@@ -107,6 +108,7 @@ public partial class DuplicatesViewModel : ViewModelBase
         if (!ok) return;
 
         IsBusy = true;
+        _cts?.Dispose();
         _cts = new CancellationTokenSource();
         try
         {

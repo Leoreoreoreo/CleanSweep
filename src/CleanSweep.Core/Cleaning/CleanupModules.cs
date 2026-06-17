@@ -21,12 +21,13 @@ public abstract class DirectoryCleanupModule : ICleanupModule
         foreach (var dir in Targets(ctx.Paths).Distinct())
         {
             ctx.Cancellation.ThrowIfCancellationRequested();
-            if (!Directory.Exists(dir)) continue;
+            if (!Directory.Exists(dir) || ctx.IsExcluded(dir)) continue;
             ctx.Progress?.Report($"Scanning {dir}");
 
             foreach (var child in ctx.Scanner.EnumerateImmediateChildren(dir))
             {
                 ctx.Cancellation.ThrowIfCancellationRequested();
+                if (ctx.IsExcluded(child.FullPath)) continue;
                 long size = ctx.Scanner.GetSize(child, ctx.Cancellation);
                 if (size <= 0) continue;
 

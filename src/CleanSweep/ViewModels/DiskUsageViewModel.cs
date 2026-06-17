@@ -101,6 +101,7 @@ public partial class DiskUsageViewModel : ViewModelBase
         Slices.Clear();
         TotalBytes = 0;
         BuildBreadcrumbs(root);
+        _cts?.Dispose();
         _cts = new CancellationTokenSource();
         try
         {

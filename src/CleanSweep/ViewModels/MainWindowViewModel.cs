@@ -140,6 +140,7 @@ public partial class MainWindowViewModel : ViewModelBase
         Categories.Clear();
         TotalReclaimable = 0;
         SelectedBytes = 0;
+        _cts?.Dispose();
         _cts = new CancellationTokenSource();
         var progress = new Progress<string>(s => StatusText = s);
 
@@ -189,6 +190,7 @@ public partial class MainWindowViewModel : ViewModelBase
         if (!confirmed) return;
 
         IsBusy = true;
+        _cts?.Dispose();
         _cts = new CancellationTokenSource();
         DeleteOutcome? outcome = null;
         try

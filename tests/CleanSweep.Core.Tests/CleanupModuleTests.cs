@@ -46,6 +46,31 @@ public sealed class CleanupModuleTests
     }
 
     [Fact]
+    public void DirectoryModule_skips_excluded_folders()
+    {
+        using var tree = new TempTree();
+        var temp = tree.Dir("Temp");
+        tree.Write("Temp/keep.bin", 2000);
+        tree.Write("Temp/skipme/big.bin", 5000); // a child directory the user excluded
+
+        var paths = new FakePlatformPaths();
+        paths.Temp.Add(temp);
+
+        var ctx = new ScanContext
+        {
+            Paths = paths,
+            Scanner = new FileSystemScanner(),
+            Cancellation = CancellationToken.None,
+            ExcludedPaths = new[] { Path.Combine(temp, "skipme") }
+        };
+
+        var result = new TempFilesModule().Scan(ctx);
+
+        var item = Assert.Single(result.Items);
+        Assert.Equal("keep.bin", item.DisplayName);
+    }
+
+    [Fact]
     public void DirectoryModule_ignores_missing_target_dirs()
     {
         var paths = new FakePlatformPaths();

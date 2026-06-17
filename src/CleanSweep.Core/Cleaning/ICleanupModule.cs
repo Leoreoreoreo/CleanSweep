@@ -12,14 +12,18 @@ public sealed class ScanContext
     public IProgress<string>? Progress { get; init; }
     public CancellationToken Cancellation { get; init; }
 
-    /// <summary>Folders the user has chosen never to scan.</summary>
-    public IReadOnlyList<string> ExcludedPaths { get; init; } = Array.Empty<string>();
+    private IReadOnlyList<string> _excludedPaths = Array.Empty<string>();
+    private string[] _excluded = Array.Empty<string>();
 
-    private string[]? _excluded;
+    /// <summary>Folders the user has chosen never to scan. Normalized once, on construction.</summary>
+    public IReadOnlyList<string> ExcludedPaths
+    {
+        get => _excludedPaths;
+        init { _excludedPaths = value ?? Array.Empty<string>(); _excluded = PathScope.Normalize(_excludedPaths); }
+    }
 
-    /// <summary>True if <paramref name="path"/> is, or sits under, an excluded folder.</summary>
-    public bool IsExcluded(string path)
-        => ExcludedPaths.Count != 0 && PathScope.IsUnderAny(path, _excluded ??= PathScope.Normalize(ExcludedPaths));
+    /// <summary>True if <paramref name="path"/> is, or sits under, an excluded folder. Thread-safe (read-only).</summary>
+    public bool IsExcluded(string path) => _excluded.Length != 0 && PathScope.IsUnderAny(path, _excluded);
 }
 
 /// <summary>A unit of scanning logic for one <see cref="CleanCategory"/>.</summary>

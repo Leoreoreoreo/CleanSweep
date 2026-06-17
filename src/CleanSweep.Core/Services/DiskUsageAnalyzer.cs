@@ -23,6 +23,11 @@ public sealed class DiskUsageAnalyzer
                 ct.ThrowIfCancellationRequested();
                 if (child.IsDirectory)
                 {
+                    // Don't follow junctions/symlinks - avoids double-counting redirected trees
+                    // (e.g. the legacy "Application Data" -> AppData\Roaming junction on Windows).
+                    try { if ((new DirectoryInfo(child.FullPath).Attributes & FileAttributes.ReparsePoint) != 0) continue; }
+                    catch { continue; }
+
                     progress?.Report($"Measuring {child.Name}");
                     long size = _scanner.GetDirectorySize(child.FullPath, ct);
                     if (size > 0) entries.Add(new UsageEntry(child.Name, child.FullPath, size, IsDirectory: true));
