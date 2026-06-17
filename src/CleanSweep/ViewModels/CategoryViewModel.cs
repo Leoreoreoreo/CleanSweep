@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CleanSweep.Core;
+using CleanSweep.Core.AI;
 using CleanSweep.Core.Models;
 
 namespace CleanSweep.ViewModels;
@@ -20,12 +21,12 @@ public partial class CategoryViewModel : ObservableObject
 
     private bool _suppress;
 
-    public CategoryViewModel(CategoryResult result)
+    public CategoryViewModel(CategoryResult result, IItemExplainer explainer)
     {
         Category = result.Category;
         foreach (var item in result.Items)
         {
-            var vm = new CleanItemViewModel(item);
+            var vm = new CleanItemViewModel(item, explainer);
             vm.PropertyChanged += OnItemPropertyChanged;
             Items.Add(vm);
         }

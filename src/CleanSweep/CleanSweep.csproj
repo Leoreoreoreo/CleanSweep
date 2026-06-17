@@ -26,5 +26,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CleanSweep.Core\CleanSweep.Core.csproj" />
+    <ProjectReference Include="..\CleanSweep.AI\CleanSweep.AI.csproj" />
   </ItemGroup>
 </Project>

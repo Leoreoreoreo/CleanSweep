@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\CleanSweep.Core\CleanSweep.Core.csproj" />
+    <ProjectReference Include="..\..\src\CleanSweep.AI\CleanSweep.AI.csproj" />
   </ItemGroup>
 
 </Project>

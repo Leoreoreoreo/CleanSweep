@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/CleanSweep.AI/CleanSweep.AI.csproj" />
     <Project Path="src/CleanSweep.Core/CleanSweep.Core.csproj" />
     <Project Path="src/CleanSweep/CleanSweep.csproj" />
   </Folder>

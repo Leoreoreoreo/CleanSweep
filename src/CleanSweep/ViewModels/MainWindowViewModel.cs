@@ -6,7 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CleanSweep.AI;
 using CleanSweep.Core;
+using CleanSweep.Core.AI;
 using CleanSweep.Core.Apps;
 using CleanSweep.Core.Cleaning;
 using CleanSweep.Core.Memory;
@@ -21,6 +23,7 @@ public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly ScanEngine _engine = new();
     private readonly IMemoryManager _memory = MemoryManagerFactory.Current;
+    private readonly IItemExplainer _explainer = ItemExplainerFactory.Create();
     private CancellationTokenSource? _cts;
 
     public ObservableCollection<CategoryViewModel> Categories { get; } = new();
@@ -77,7 +80,7 @@ public partial class MainWindowViewModel : ViewModelBase
             foreach (var result in results)
             {
                 if (result.Count == 0) continue;
-                var category = new CategoryViewModel(result);
+                var category = new CategoryViewModel(result, _explainer);
                 category.PropertyChanged += OnCategoryChanged;
                 Categories.Add(category);
             }
