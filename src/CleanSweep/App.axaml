@@ -3,13 +3,151 @@
              x:Class="CleanSweep.App"
              xmlns:local="using:CleanSweep"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
-  
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- Cohesive accent (overrides FluentTheme's system accent palette) -->
+            <Color x:Key="SystemAccentColor">#3B82F6</Color>
+            <Color x:Key="SystemAccentColorDark1">#2F6BEA</Color>
+            <Color x:Key="SystemAccentColorDark2">#2A5FD0</Color>
+            <Color x:Key="SystemAccentColorDark3">#244FAD</Color>
+            <Color x:Key="SystemAccentColorLight1">#5B97F7</Color>
+            <Color x:Key="SystemAccentColorLight2">#7DA9F9</Color>
+            <Color x:Key="SystemAccentColorLight3">#9FC0FB</Color>
+
+            <LinearGradientBrush x:Key="AccentBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+                <GradientStop Color="#3B82F6" Offset="0"/>
+                <GradientStop Color="#6366F1" Offset="1"/>
+            </LinearGradientBrush>
+            <SolidColorBrush x:Key="DangerBrush" Color="#E5554D"/>
+            <SolidColorBrush x:Key="DangerBrushHover" Color="#D6453D"/>
+
+            <ResourceDictionary.ThemeDictionaries>
+                <!-- Light "liquid glass" palette -->
+                <ResourceDictionary x:Key="Light">
+                    <Color x:Key="AcrylicTintColor">#EEF1F7</Color>
+                    <SolidColorBrush x:Key="CardBrush" Color="#FFFFFF" Opacity="0.55"/>
+                    <SolidColorBrush x:Key="CardBrushHover" Color="#FFFFFF" Opacity="0.72"/>
+                    <SolidColorBrush x:Key="CardBorderBrush" Color="#FFFFFF" Opacity="0.75"/>
+                    <SolidColorBrush x:Key="SidebarBrush" Color="#FFFFFF" Opacity="0.38"/>
+                    <SolidColorBrush x:Key="HairlineBrush" Color="#000000" Opacity="0.08"/>
+                    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#0F131B"/>
+                    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#0F131B" Opacity="0.6"/>
+                    <SolidColorBrush x:Key="NavSelectedBrush" Color="#3B82F6" Opacity="0.16"/>
+                    <SolidColorBrush x:Key="NavHoverBrush" Color="#000000" Opacity="0.05"/>
+                </ResourceDictionary>
+                <!-- Dark "liquid glass" palette -->
+                <ResourceDictionary x:Key="Dark">
+                    <Color x:Key="AcrylicTintColor">#15171C</Color>
+                    <SolidColorBrush x:Key="CardBrush" Color="#FFFFFF" Opacity="0.06"/>
+                    <SolidColorBrush x:Key="CardBrushHover" Color="#FFFFFF" Opacity="0.10"/>
+                    <SolidColorBrush x:Key="CardBorderBrush" Color="#FFFFFF" Opacity="0.12"/>
+                    <SolidColorBrush x:Key="SidebarBrush" Color="#FFFFFF" Opacity="0.04"/>
+                    <SolidColorBrush x:Key="HairlineBrush" Color="#FFFFFF" Opacity="0.10"/>
+                    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F2F4F8"/>
+                    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#F2F4F8" Opacity="0.62"/>
+                    <SolidColorBrush x:Key="NavSelectedBrush" Color="#6E9BFF" Opacity="0.24"/>
+                    <SolidColorBrush x:Key="NavHoverBrush" Color="#FFFFFF" Opacity="0.06"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
     <Application.Styles>
-        <FluentTheme />
+        <FluentTheme/>
+
+        <!-- Translucent rounded card surface -->
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="{DynamicResource CardBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="BoxShadow" Value="0 8 28 0 #22000000"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.18"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Border.card:pointerover">
+            <Setter Property="Background" Value="{DynamicResource CardBrushHover}"/>
+        </Style>
+
+        <!-- Accent buttons: round the FluentTheme accent button -->
+        <Style Selector="Button.accent">
+            <Setter Property="CornerRadius" Value="10"/>
+        </Style>
+
+        <!-- Destructive buttons -->
+        <Style Selector="Button.danger">
+            <Setter Property="Background" Value="{StaticResource DangerBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="10"/>
+        </Style>
+        <Style Selector="Button.danger:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource DangerBrushHover}"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <!-- Small round icon button (the "?" affordance) -->
+        <Style Selector="Button.icon">
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.12"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.icon:pointerover">
+            <Setter Property="RenderTransform" Value="scale(1.12)"/>
+        </Style>
+
+        <!-- Sidebar nav list -->
+        <Style Selector="ListBox.nav">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="ListBox.nav ListBoxItem">
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="Margin" Value="0,2"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="ListBox.nav ListBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource NavHoverBrush}"/>
+            <Setter Property="CornerRadius" Value="10"/>
+        </Style>
+        <Style Selector="ListBox.nav ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource NavSelectedBrush}"/>
+            <Setter Property="CornerRadius" Value="10"/>
+        </Style>
+        <Style Selector="ListBox.nav ListBoxItem:selected">
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <!-- Expander: flatten chrome so it reads as part of the glass -->
+        <Style Selector="Expander.flat /template/ Border#ExpanderHeader">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <!-- Fade-in for the AI explanation flyout -->
+        <Style Selector="Border.flyout">
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+        </Style>
     </Application.Styles>
 </Application>

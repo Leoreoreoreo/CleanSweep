@@ -12,6 +12,7 @@ using CleanSweep.Core.AI;
 using CleanSweep.Core.Apps;
 using CleanSweep.Core.Cleaning;
 using CleanSweep.Core.Memory;
+using CleanSweep.Core.Models;
 using CleanSweep.Core.Platform;
 using CleanSweep.Core.Services;
 using CleanSweep.Core.Startup;
@@ -42,6 +43,32 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private double _memoryUsedPercent;
     [ObservableProperty] private string _memoryText = "";
     [ObservableProperty] private string _memoryDetail = "";
+
+    // ---- Sidebar navigation ----
+    // 0 Smart Scan · 1 Large Files · 2 Duplicates · 3 Apps · 4 Startup · 5 Memory
+    [ObservableProperty] private int _selectedSectionIndex;
+
+    public bool IsSmartScanSection => SelectedSectionIndex == 0;
+    public bool IsLargeFilesSection => SelectedSectionIndex == 1;
+    public bool IsDuplicatesSection => SelectedSectionIndex == 2;
+    public bool IsAppsSection => SelectedSectionIndex == 3;
+    public bool IsStartupSection => SelectedSectionIndex == 4;
+    public bool IsMemorySection => SelectedSectionIndex == 5;
+
+    partial void OnSelectedSectionIndexChanged(int value)
+    {
+        OnPropertyChanged(nameof(IsSmartScanSection));
+        OnPropertyChanged(nameof(IsLargeFilesSection));
+        OnPropertyChanged(nameof(IsDuplicatesSection));
+        OnPropertyChanged(nameof(IsAppsSection));
+        OnPropertyChanged(nameof(IsStartupSection));
+        OnPropertyChanged(nameof(IsMemorySection));
+    }
+
+    /// <summary>The Large Files category from the last scan, for its dedicated section.</summary>
+    public CategoryViewModel? LargeFilesCategory =>
+        Categories.FirstOrDefault(c => c.Category == CleanCategory.LargeFiles);
+    public bool HasLargeFiles => LargeFilesCategory is not null;
 
     public string TotalReclaimableText => ByteSize.Human(TotalReclaimable);
     public string SelectedText => ByteSize.Human(SelectedBytes);
@@ -86,6 +113,8 @@ public partial class MainWindowViewModel : ViewModelBase
             }
             UpdateTotals();
             HasResults = Categories.Count > 0;
+            OnPropertyChanged(nameof(LargeFilesCategory));
+            OnPropertyChanged(nameof(HasLargeFiles));
             StatusText = HasResults
                 ? $"Found {ByteSize.Human(TotalReclaimable)} of reclaimable space across {Categories.Count} categories."
                 : "All clean — nothing to reclaim. ✨";

@@ -3,65 +3,253 @@
         xmlns:vm="using:CleanSweep.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="680"
+        mc:Ignorable="d" d:DesignWidth="980" d:DesignHeight="700"
         x:Class="CleanSweep.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="CleanSweep" Width="900" Height="680"
-        MinWidth="720" MinHeight="540">
+        Title="CleanSweep" Width="980" Height="700"
+        MinWidth="800" MinHeight="560"
+        Background="Transparent"
+        TransparencyLevelHint="AcrylicBlur, Mica, Blur">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <DockPanel LastChildFill="True">
+    <Window.DataTemplates>
 
-        <!-- Header -->
-        <Border DockPanel.Dock="Top" Padding="22,18" Background="#1F6FEB">
-            <StackPanel>
-                <TextBlock Text="🧹 CleanSweep" FontSize="23" FontWeight="Bold" Foreground="White"/>
-                <TextBlock Text="Cross-platform disk &amp; memory cleaner — Windows · macOS"
-                           Foreground="#DCE8FF" FontSize="12" Margin="0,2,0,0"/>
+        <!-- ============ Shared item templates (implicit by type) ============ -->
+
+        <!-- A single scan item, with the "What is this?" AI flyout -->
+        <DataTemplate DataType="vm:CleanItemViewModel" x:DataType="vm:CleanItemViewModel">
+            <StackPanel Margin="6,3">
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                    <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="1" Margin="4,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{Binding Path}" FontSize="10" TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                    <Button Grid.Column="2" Content="?" Classes="icon" Width="26" Height="26" Padding="0"
+                            FontWeight="Bold" VerticalAlignment="Center" Margin="6,0,10,0"
+                            Command="{Binding ExplainCommand}" ToolTip.Tip="What is this? (AI)"/>
+                    <TextBlock Grid.Column="3" Text="{Binding SizeText}" VerticalAlignment="Center"
+                               FontFamily="Consolas,monospace" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </Grid>
+
+                <Border Classes="flyout card" IsVisible="{Binding IsExplanationOpen}" Margin="26,5,0,6" Padding="13,11">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsExplaining}">
+                            <ProgressBar IsIndeterminate="True" Width="90" Height="4" VerticalAlignment="Center"/>
+                            <TextBlock Text="Asking the AI…" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel IsVisible="{Binding HasExplanation}" Spacing="6">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Border CornerRadius="9" Padding="9,2" VerticalAlignment="Center" Background="{Binding RiskBrush}">
+                                    <TextBlock Text="{Binding RiskText}" Foreground="White" FontSize="11" FontWeight="SemiBold"/>
+                                </Border>
+                                <TextBlock Text="{Binding Explanation.Summary}" FontWeight="SemiBold" VerticalAlignment="Center"
+                                           TextWrapping="Wrap" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding Explanation.Reason}" TextWrapping="Wrap" FontSize="12"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{Binding Explanation.Recommendation}" FontStyle="Italic" TextWrapping="Wrap"
+                                       FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock Text="AI explanations are off — set ANTHROPIC_API_KEY to enable."
+                                       IsVisible="{Binding ShowOfflineHint}" Opacity="0.5" FontSize="10"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
             </StackPanel>
-        </Border>
+        </DataTemplate>
 
-        <TabControl Padding="0">
-
-            <!-- ============ Smart Scan ============ -->
-            <TabItem Header="🔍 Smart Scan">
-                <DockPanel LastChildFill="True">
-
-                    <!-- Memory card -->
-                    <Border DockPanel.Dock="Top" Margin="16,16,16,0" Padding="16"
-                            CornerRadius="10" Background="#14808080" BorderBrush="#28808080" BorderThickness="1">
-                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding MemoryText}" FontWeight="SemiBold"/>
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding MemoryDetail}"
-                                       Opacity="0.7" FontSize="12" Margin="0,2,0,6"/>
-                            <ProgressBar Grid.Row="2" Grid.Column="0" Height="6" Minimum="0" Maximum="100"
-                                         Value="{Binding MemoryUsedPercent}"/>
-                            <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Content="Free Up RAM"
-                                    Command="{Binding FreeMemoryCommand}" VerticalAlignment="Center" Margin="14,0,0,0"/>
+        <!-- A category, as a glass card with an expander -->
+        <DataTemplate DataType="vm:CategoryViewModel" x:DataType="vm:CategoryViewModel">
+            <Border Classes="card" Margin="0,0,0,10" Padding="6,2">
+                <Expander Classes="flat" IsExpanded="{Binding IsExpanded}" Background="Transparent" BorderThickness="0"
+                          HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                    <Expander.Header>
+                        <Grid ColumnDefinitions="Auto,Auto,*,Auto" MinWidth="560">
+                            <CheckBox Grid.Column="0" IsThreeState="True" IsChecked="{Binding AllSelected, Mode=TwoWay}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Glyph}" FontSize="20" VerticalAlignment="Center" Margin="2,0,0,0"/>
+                            <StackPanel Grid.Column="2" Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock Text="{Binding Description}" FontSize="11" TextTrimming="CharacterEllipsis"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="3" Text="{Binding Summary}" VerticalAlignment="Center" Margin="8,0,12,0"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </Grid>
-                    </Border>
+                    </Expander.Header>
+                    <ItemsControl ItemsSource="{Binding Items}" Margin="0,4,0,4"/>
+                </Expander>
+            </Border>
+        </DataTemplate>
 
-                    <!-- Action bar -->
-                    <Grid DockPanel.Dock="Top" Margin="16,14,16,4" ColumnDefinitions="Auto,Auto,*,Auto">
-                        <Button Grid.Column="0" Content="🔍  Smart Scan" Classes="accent" FontWeight="SemiBold"
-                                Padding="18,9" Command="{Binding ScanCommand}" IsEnabled="{Binding !IsBusy}"/>
-                        <Button Grid.Column="1" Content="Cancel" Margin="8,0,0,0"
-                                Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}"/>
-                        <ProgressBar Grid.Column="3" IsIndeterminate="True" Width="120" Height="4"
-                                     VerticalAlignment="Center" IsVisible="{Binding IsBusy}"/>
+        <!-- A duplicate group -->
+        <DataTemplate DataType="vm:DuplicateGroupViewModel" x:DataType="vm:DuplicateGroupViewModel">
+            <Border Classes="card" Margin="0,0,0,10" Padding="6,2">
+                <Expander Classes="flat" IsExpanded="{Binding IsExpanded}" Background="Transparent" BorderThickness="0"
+                          HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                    <Expander.Header>
+                        <Grid ColumnDefinitions="*,Auto" MinWidth="560">
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock Text="{Binding Header}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            </StackPanel>
+                            <Button Grid.Column="1" Content="Select extras" Command="{Binding SelectExtrasCommand}" Margin="8,0,12,0"/>
+                        </Grid>
+                    </Expander.Header>
+                    <ItemsControl ItemsSource="{Binding Files}" Margin="0,4,0,4"/>
+                </Expander>
+            </Border>
+        </DataTemplate>
+
+        <!-- A duplicate file row -->
+        <DataTemplate DataType="vm:DuplicateFileViewModel" x:DataType="vm:DuplicateFileViewModel">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto" Margin="14,3,8,3">
+                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center"/>
+                <StackPanel Grid.Column="1" Margin="4,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{Binding Path}" FontSize="10" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+                <TextBlock Grid.Column="2" Text="{Binding ModifiedText}" VerticalAlignment="Center" Margin="8,0,8,0"
+                           FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                <TextBlock Grid.Column="3" Text="{Binding SizeText}" VerticalAlignment="Center" FontFamily="Consolas,monospace"
+                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+            </Grid>
+        </DataTemplate>
+
+        <!-- An installed application -->
+        <DataTemplate DataType="vm:AppViewModel" x:DataType="vm:AppViewModel">
+            <Border Classes="card" Margin="0,0,0,8" Padding="14,10">
+                <Grid ColumnDefinitions="*,Auto,Auto">
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}">
+                            <Run Text="{Binding Publisher}"/><Run Text="   "/><Run Text="{Binding Version}"/>
+                        </TextBlock>
+                    </StackPanel>
+                    <TextBlock Grid.Column="1" Text="{Binding SizeText}" VerticalAlignment="Center" Margin="8,0,14,0"
+                               FontFamily="Consolas,monospace" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <Button Grid.Column="2" Content="Uninstall" Classes="danger" Command="{Binding UninstallCommand}" VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- A startup item -->
+        <DataTemplate DataType="vm:StartupItemViewModel" x:DataType="vm:StartupItemViewModel">
+            <Border Classes="card" Margin="0,0,0,8" Padding="14,10">
+                <Grid ColumnDefinitions="*,Auto,Auto">
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{Binding Command}" FontSize="10" TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,14,0">
+                        <TextBlock Text="{Binding StateText}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBlock FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.85">
+                            <Run Text="{Binding KindLabel}"/><Run Text="  ·  "/><Run Text="{Binding ScopeLabel}"/>
+                        </TextBlock>
+                    </StackPanel>
+                    <Button Grid.Column="2" Content="{Binding ToggleLabel}" Command="{Binding ToggleCommand}"
+                            VerticalAlignment="Center" MinWidth="86"/>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </Window.DataTemplates>
+
+    <Panel>
+        <!-- Frosted "liquid glass" backdrop -->
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial BackgroundSource="Digger"
+                                             TintColor="{DynamicResource AcrylicTintColor}"
+                                             TintOpacity="1" MaterialOpacity="0.6"/>
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+
+        <Grid ColumnDefinitions="236,*">
+
+            <!-- ============ Sidebar ============ -->
+            <Border Grid.Column="0" Background="{DynamicResource SidebarBrush}"
+                    BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="0,0,1,0">
+                <DockPanel Margin="14,20,14,16">
+                    <StackPanel DockPanel.Dock="Top" Margin="6,0,0,18">
+                        <TextBlock Text="🧹 CleanSweep" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="Disk &amp; memory cleaner" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    </StackPanel>
+
+                    <ListBox Classes="nav" SelectedIndex="{Binding SelectedSectionIndex, Mode=TwoWay}">
+                        <ListBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="11">
+                                <TextBlock Text="🔍" FontSize="15" VerticalAlignment="Center"/>
+                                <TextBlock Text="Smart Scan" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                        <ListBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="11">
+                                <TextBlock Text="📂" FontSize="15" VerticalAlignment="Center"/>
+                                <TextBlock Text="Large Files" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                        <ListBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="11">
+                                <TextBlock Text="👯" FontSize="15" VerticalAlignment="Center"/>
+                                <TextBlock Text="Duplicates" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                        <ListBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="11">
+                                <TextBlock Text="📦" FontSize="15" VerticalAlignment="Center"/>
+                                <TextBlock Text="Apps" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                        <ListBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="11">
+                                <TextBlock Text="🚀" FontSize="15" VerticalAlignment="Center"/>
+                                <TextBlock Text="Startup" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                        <ListBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="11">
+                                <TextBlock Text="🧠" FontSize="15" VerticalAlignment="Center"/>
+                                <TextBlock Text="Memory" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <!-- ============ Content ============ -->
+            <Grid Grid.Column="1">
+
+                <!-- Smart Scan -->
+                <DockPanel IsVisible="{Binding IsSmartScanSection}" Margin="22,20">
+                    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Smart Scan" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="Find reclaimable space across your system" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <Button Content="🔍  Smart Scan" Classes="accent" FontWeight="SemiBold" Padding="18,9"
+                                    Command="{Binding ScanCommand}" IsEnabled="{Binding !IsBusy}"/>
+                            <Button Content="Cancel" Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}"/>
+                        </StackPanel>
                     </Grid>
 
-                    <!-- Footer -->
-                    <Border DockPanel.Dock="Bottom" Padding="16,12" Background="#14808080"
-                            BorderBrush="#28808080" BorderThickness="0,1,0,0">
+                    <ProgressBar DockPanel.Dock="Top" IsIndeterminate="True" Height="3" Margin="0,12,0,0"
+                                 IsVisible="{Binding IsBusy}"/>
+
+                    <Border DockPanel.Dock="Bottom" Classes="card" Padding="16,12" Margin="0,14,0,0">
                         <Grid ColumnDefinitions="*,Auto">
                             <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding StatusText}" TextWrapping="Wrap"/>
-                                <TextBlock Margin="0,3,0,0" FontSize="12" Opacity="0.75">
+                                <TextBlock Text="{Binding StatusText}" TextWrapping="Wrap" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock Margin="0,3,0,0" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}">
                                     <Run Text="Selected:"/>
                                     <Run Text="{Binding SelectedText}" FontWeight="SemiBold"/>
                                     <Run Text="  of  "/>
@@ -74,236 +262,128 @@
                         </Grid>
                     </Border>
 
-                    <!-- Categories -->
-                    <ScrollViewer Padding="16,8">
+                    <ScrollViewer Margin="0,14,0,0">
                         <Panel>
-                            <ItemsControl ItemsSource="{Binding Categories}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate x:DataType="vm:CategoryViewModel">
-                                        <Expander Margin="0,0,0,8" IsExpanded="{Binding IsExpanded}"
-                                                  HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                                            <Expander.Header>
-                                                <Grid ColumnDefinitions="Auto,Auto,*,Auto" MinWidth="560">
-                                                    <CheckBox Grid.Column="0" IsThreeState="True"
-                                                              IsChecked="{Binding AllSelected, Mode=TwoWay}" VerticalAlignment="Center"/>
-                                                    <TextBlock Grid.Column="1" Text="{Binding Glyph}" FontSize="20"
-                                                               VerticalAlignment="Center" Margin="2,0,0,0"/>
-                                                    <StackPanel Grid.Column="2" Margin="10,0,0,0" VerticalAlignment="Center">
-                                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
-                                                        <TextBlock Text="{Binding Description}" FontSize="11" Opacity="0.6"
-                                                                   TextTrimming="CharacterEllipsis"/>
-                                                    </StackPanel>
-                                                    <TextBlock Grid.Column="3" Text="{Binding Summary}" VerticalAlignment="Center"
-                                                               Opacity="0.85" Margin="8,0,12,0"/>
-                                                </Grid>
-                                            </Expander.Header>
-
-                                            <ItemsControl ItemsSource="{Binding Items}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate x:DataType="vm:CleanItemViewModel">
-                                                        <StackPanel Margin="20,3,8,3">
-                                                            <Grid ColumnDefinitions="Auto,*,Auto,Auto">
-                                                                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                                                          VerticalAlignment="Center"/>
-                                                                <StackPanel Grid.Column="1" Margin="4,0,0,0" VerticalAlignment="Center">
-                                                                    <TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis"/>
-                                                                    <TextBlock Text="{Binding Path}" FontSize="10" Opacity="0.45"
-                                                                               TextTrimming="CharacterEllipsis"/>
-                                                                </StackPanel>
-                                                                <Button Grid.Column="2" Content="?" Width="24" Height="24" Padding="0"
-                                                                        FontWeight="Bold" VerticalAlignment="Center" Margin="6,0,8,0"
-                                                                        Command="{Binding ExplainCommand}" ToolTip.Tip="What is this? (AI)"/>
-                                                                <TextBlock Grid.Column="3" Text="{Binding SizeText}" VerticalAlignment="Center"
-                                                                           Opacity="0.85" FontFamily="Consolas,monospace"/>
-                                                            </Grid>
-
-                                                            <!-- "What is this?" explanation -->
-                                                            <Border IsVisible="{Binding IsExplanationOpen}" Margin="26,4,0,6" Padding="12,10"
-                                                                    CornerRadius="8" Background="#14808080" BorderBrush="#26808080" BorderThickness="1">
-                                                                <StackPanel>
-                                                                    <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsExplaining}">
-                                                                        <ProgressBar IsIndeterminate="True" Width="90" Height="4" VerticalAlignment="Center"/>
-                                                                        <TextBlock Text="Asking the AI…" Opacity="0.7" VerticalAlignment="Center"/>
-                                                                    </StackPanel>
-                                                                    <StackPanel IsVisible="{Binding HasExplanation}" Spacing="5">
-                                                                        <StackPanel Orientation="Horizontal" Spacing="8">
-                                                                            <Border CornerRadius="9" Padding="9,2" VerticalAlignment="Center"
-                                                                                    Background="{Binding RiskBrush}">
-                                                                                <TextBlock Text="{Binding RiskText}" Foreground="White"
-                                                                                           FontSize="11" FontWeight="SemiBold"/>
-                                                                            </Border>
-                                                                            <TextBlock Text="{Binding Explanation.Summary}" FontWeight="SemiBold"
-                                                                                       VerticalAlignment="Center" TextWrapping="Wrap"/>
-                                                                        </StackPanel>
-                                                                        <TextBlock Text="{Binding Explanation.Reason}" Opacity="0.8"
-                                                                                   TextWrapping="Wrap" FontSize="12"/>
-                                                                        <TextBlock Text="{Binding Explanation.Recommendation}" FontStyle="Italic"
-                                                                                   Opacity="0.8" TextWrapping="Wrap" FontSize="12"/>
-                                                                        <TextBlock Text="AI explanations are off — set ANTHROPIC_API_KEY to enable."
-                                                                                   IsVisible="{Binding ShowOfflineHint}" Opacity="0.5" FontSize="10"/>
-                                                                    </StackPanel>
-                                                                </StackPanel>
-                                                            </Border>
-                                                        </StackPanel>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </Expander>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-
-                            <TextBlock Text="No scan results yet — click Smart Scan above to begin."
-                                       IsVisible="{Binding !HasResults}" Opacity="0.5"
-                                       HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,60,0,0"/>
+                            <ItemsControl ItemsSource="{Binding Categories}"/>
+                            <TextBlock Text="No scan results yet — click Smart Scan to begin."
+                                       IsVisible="{Binding !HasResults}" Foreground="{DynamicResource TextSecondaryBrush}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,70,0,0"/>
                         </Panel>
                     </ScrollViewer>
                 </DockPanel>
-            </TabItem>
 
-            <!-- ============ Duplicates ============ -->
-            <TabItem Header="👯 Duplicates">
-                <DockPanel Margin="16" LastChildFill="True">
-                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,10">
-                        <Button Content="🔍  Find Duplicates" Classes="accent" FontWeight="SemiBold" Padding="16,8"
-                                Command="{Binding Duplicates.ScanCommand}" IsEnabled="{Binding !Duplicates.IsBusy}"/>
-                        <Button Content="Cancel" Command="{Binding Duplicates.CancelCommand}" IsVisible="{Binding Duplicates.IsBusy}"/>
-                        <Button Content="🗑  Delete selected" Classes="danger"
-                                Command="{Binding Duplicates.DeleteSelectedCommand}" IsEnabled="{Binding Duplicates.HasGroups}"/>
-                        <ProgressBar IsIndeterminate="True" Width="110" Height="4" VerticalAlignment="Center"
-                                     IsVisible="{Binding Duplicates.IsBusy}"/>
-                    </StackPanel>
+                <!-- Large Files -->
+                <DockPanel IsVisible="{Binding IsLargeFilesSection}" Margin="22,20">
+                    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Large Files" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="Big files worth reviewing (≥ 100 MB) — opt in before deleting" FontSize="12"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                        <Button Grid.Column="1" Content="🧹  Clean" Classes="accent" FontWeight="Bold" Padding="20,9"
+                                VerticalAlignment="Center" Command="{Binding CleanCommand}" IsEnabled="{Binding HasResults}"/>
+                    </Grid>
 
-                    <Border DockPanel.Dock="Bottom" Margin="0,8,0,0">
-                        <TextBlock Text="{Binding Duplicates.StatusText}" TextWrapping="Wrap" Opacity="0.85"/>
-                    </Border>
-
-                    <ScrollViewer>
-                        <ItemsControl ItemsSource="{Binding Duplicates.Groups}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate x:DataType="vm:DuplicateGroupViewModel">
-                                    <Expander Margin="0,0,0,8" IsExpanded="{Binding IsExpanded}"
-                                              HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                                        <Expander.Header>
-                                            <Grid ColumnDefinitions="*,Auto" MinWidth="560">
-                                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
-                                                    <TextBlock Text="{Binding Header}" FontSize="11" Opacity="0.6"/>
-                                                </StackPanel>
-                                                <Button Grid.Column="1" Content="Select extras"
-                                                        Command="{Binding SelectExtrasCommand}" Margin="8,0,12,0"/>
-                                            </Grid>
-                                        </Expander.Header>
-                                        <ItemsControl ItemsSource="{Binding Files}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate x:DataType="vm:DuplicateFileViewModel">
-                                                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" Margin="20,3,8,3">
-                                                        <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                                                  VerticalAlignment="Center"/>
-                                                        <StackPanel Grid.Column="1" Margin="4,0,0,0" VerticalAlignment="Center">
-                                                            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis"/>
-                                                            <TextBlock Text="{Binding Path}" FontSize="10" Opacity="0.45"
-                                                                       TextTrimming="CharacterEllipsis"/>
-                                                        </StackPanel>
-                                                        <TextBlock Grid.Column="2" Text="{Binding ModifiedText}" Opacity="0.55"
-                                                                   VerticalAlignment="Center" Margin="8,0,8,0" FontSize="11"/>
-                                                        <TextBlock Grid.Column="3" Text="{Binding SizeText}" VerticalAlignment="Center"
-                                                                   FontFamily="Consolas,monospace" Opacity="0.85"/>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </Expander>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                    <ScrollViewer Margin="0,14,0,0">
+                        <Panel>
+                            <ItemsControl ItemsSource="{Binding LargeFilesCategory.Items}" IsVisible="{Binding HasLargeFiles}"/>
+                            <TextBlock Text="Run a Smart Scan first to list large files here."
+                                       IsVisible="{Binding !HasLargeFiles}" Foreground="{DynamicResource TextSecondaryBrush}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,70,0,0"/>
+                        </Panel>
                     </ScrollViewer>
                 </DockPanel>
-            </TabItem>
 
-            <!-- ============ Apps ============ -->
-            <TabItem Header="📦 Apps">
-                <DockPanel Margin="16" LastChildFill="True">
-                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,10">
-                        <Button Content="↻  List Applications" Classes="accent" FontWeight="SemiBold" Padding="16,8"
-                                Command="{Binding Apps.LoadCommand}" IsEnabled="{Binding !Apps.IsBusy}"/>
-                        <ProgressBar IsIndeterminate="True" Width="110" Height="4" VerticalAlignment="Center"
-                                     IsVisible="{Binding Apps.IsBusy}"/>
-                    </StackPanel>
+                <!-- Duplicates -->
+                <DockPanel IsVisible="{Binding IsDuplicatesSection}" Margin="22,20">
+                    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Duplicate Files" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="Identical files found in more than one place" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <Button Content="🔍  Find Duplicates" Classes="accent" FontWeight="SemiBold" Padding="16,8"
+                                    Command="{Binding Duplicates.ScanCommand}" IsEnabled="{Binding !Duplicates.IsBusy}"/>
+                            <Button Content="Cancel" Command="{Binding Duplicates.CancelCommand}" IsVisible="{Binding Duplicates.IsBusy}"/>
+                            <Button Content="🗑  Delete selected" Classes="danger"
+                                    Command="{Binding Duplicates.DeleteSelectedCommand}" IsEnabled="{Binding Duplicates.HasGroups}"/>
+                        </StackPanel>
+                    </Grid>
 
-                    <Border DockPanel.Dock="Bottom" Margin="0,8,0,0">
-                        <TextBlock Text="{Binding Apps.StatusText}" TextWrapping="Wrap" Opacity="0.85"/>
-                    </Border>
+                    <ProgressBar DockPanel.Dock="Top" IsIndeterminate="True" Height="3" Margin="0,12,0,0"
+                                 IsVisible="{Binding Duplicates.IsBusy}"/>
+                    <TextBlock DockPanel.Dock="Bottom" Text="{Binding Duplicates.StatusText}" TextWrapping="Wrap"
+                               Margin="0,12,0,0" Foreground="{DynamicResource TextSecondaryBrush}"/>
 
-                    <ScrollViewer>
-                        <ItemsControl ItemsSource="{Binding Apps.Apps}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate x:DataType="vm:AppViewModel">
-                                    <Border Margin="0,0,0,6" Padding="12,9" CornerRadius="8"
-                                            Background="#14808080" BorderBrush="#22808080" BorderThickness="1">
-                                        <Grid ColumnDefinitions="*,Auto,Auto">
-                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
-                                                <TextBlock FontSize="11" Opacity="0.6">
-                                                    <Run Text="{Binding Publisher}"/><Run Text="   "/><Run Text="{Binding Version}"/>
-                                                </TextBlock>
-                                            </StackPanel>
-                                            <TextBlock Grid.Column="1" Text="{Binding SizeText}" VerticalAlignment="Center"
-                                                       Margin="8,0,12,0" FontFamily="Consolas,monospace" Opacity="0.85"/>
-                                            <Button Grid.Column="2" Content="Uninstall" Classes="danger"
-                                                    Command="{Binding UninstallCommand}" VerticalAlignment="Center"/>
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                    <ScrollViewer Margin="0,14,0,0">
+                        <ItemsControl ItemsSource="{Binding Duplicates.Groups}"/>
                     </ScrollViewer>
                 </DockPanel>
-            </TabItem>
 
-            <!-- ============ Startup ============ -->
-            <TabItem Header="🚀 Startup">
-                <DockPanel Margin="16" LastChildFill="True">
-                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,10">
-                        <Button Content="↻  List Startup Items" Classes="accent" FontWeight="SemiBold" Padding="16,8"
-                                Command="{Binding Startup.LoadCommand}" IsEnabled="{Binding !Startup.IsBusy}"/>
-                        <ProgressBar IsIndeterminate="True" Width="110" Height="4" VerticalAlignment="Center"
-                                     IsVisible="{Binding Startup.IsBusy}"/>
-                    </StackPanel>
+                <!-- Apps -->
+                <DockPanel IsVisible="{Binding IsAppsSection}" Margin="22,20">
+                    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Applications" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="Uninstall apps you no longer need" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                        <Button Grid.Column="1" Content="↻  List Applications" Classes="accent" FontWeight="SemiBold" Padding="16,8"
+                                VerticalAlignment="Center" Command="{Binding Apps.LoadCommand}" IsEnabled="{Binding !Apps.IsBusy}"/>
+                    </Grid>
 
-                    <Border DockPanel.Dock="Bottom" Margin="0,8,0,0">
-                        <TextBlock Text="{Binding Startup.StatusText}" TextWrapping="Wrap" Opacity="0.85"/>
-                    </Border>
+                    <ProgressBar DockPanel.Dock="Top" IsIndeterminate="True" Height="3" Margin="0,12,0,0"
+                                 IsVisible="{Binding Apps.IsBusy}"/>
+                    <TextBlock DockPanel.Dock="Bottom" Text="{Binding Apps.StatusText}" TextWrapping="Wrap"
+                               Margin="0,12,0,0" Foreground="{DynamicResource TextSecondaryBrush}"/>
 
-                    <ScrollViewer>
-                        <ItemsControl ItemsSource="{Binding Startup.Items}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate x:DataType="vm:StartupItemViewModel">
-                                    <Border Margin="0,0,0,6" Padding="12,9" CornerRadius="8"
-                                            Background="#14808080" BorderBrush="#22808080" BorderThickness="1">
-                                        <Grid ColumnDefinitions="*,Auto,Auto">
-                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
-                                                <TextBlock Text="{Binding Command}" FontSize="10" Opacity="0.45"
-                                                           TextTrimming="CharacterEllipsis"/>
-                                            </StackPanel>
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,12,0">
-                                                <TextBlock Text="{Binding StateText}" FontSize="11" Opacity="0.75"/>
-                                                <TextBlock FontSize="10" Opacity="0.55">
-                                                    <Run Text="{Binding KindLabel}"/><Run Text="  ·  "/><Run Text="{Binding ScopeLabel}"/>
-                                                </TextBlock>
-                                            </StackPanel>
-                                            <Button Grid.Column="2" Content="{Binding ToggleLabel}"
-                                                    Command="{Binding ToggleCommand}" VerticalAlignment="Center" MinWidth="84"/>
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                    <ScrollViewer Margin="0,14,0,0">
+                        <ItemsControl ItemsSource="{Binding Apps.Apps}"/>
                     </ScrollViewer>
                 </DockPanel>
-            </TabItem>
 
-        </TabControl>
-    </DockPanel>
+                <!-- Startup -->
+                <DockPanel IsVisible="{Binding IsStartupSection}" Margin="22,20">
+                    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Startup Items" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="Control what launches at login — disabling is reversible" FontSize="12"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                        <Button Grid.Column="1" Content="↻  List Startup Items" Classes="accent" FontWeight="SemiBold" Padding="16,8"
+                                VerticalAlignment="Center" Command="{Binding Startup.LoadCommand}" IsEnabled="{Binding !Startup.IsBusy}"/>
+                    </Grid>
+
+                    <ProgressBar DockPanel.Dock="Top" IsIndeterminate="True" Height="3" Margin="0,12,0,0"
+                                 IsVisible="{Binding Startup.IsBusy}"/>
+                    <TextBlock DockPanel.Dock="Bottom" Text="{Binding Startup.StatusText}" TextWrapping="Wrap"
+                               Margin="0,12,0,0" Foreground="{DynamicResource TextSecondaryBrush}"/>
+
+                    <ScrollViewer Margin="0,14,0,0">
+                        <ItemsControl ItemsSource="{Binding Startup.Items}"/>
+                    </ScrollViewer>
+                </DockPanel>
+
+                <!-- Memory -->
+                <DockPanel IsVisible="{Binding IsMemorySection}" Margin="22,20">
+                    <StackPanel DockPanel.Dock="Top" Margin="0,0,0,16">
+                        <TextBlock Text="Memory" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="Free up RAM by trimming process working sets" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    </StackPanel>
+
+                    <Border Classes="card" Padding="22" VerticalAlignment="Top">
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding MemoryText}" FontWeight="SemiBold" FontSize="15"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding MemoryDetail}" FontSize="12" Margin="0,3,0,10"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <ProgressBar Grid.Row="2" Grid.Column="0" Height="8" Minimum="0" Maximum="100" Value="{Binding MemoryUsedPercent}"/>
+                            <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Content="Free Up RAM" Classes="accent"
+                                    FontWeight="SemiBold" Padding="18,10" VerticalAlignment="Center" Margin="18,0,0,0"
+                                    Command="{Binding FreeMemoryCommand}"/>
+                        </Grid>
+                    </Border>
+                </DockPanel>
+            </Grid>
+        </Grid>
+    </Panel>
 </Window>
