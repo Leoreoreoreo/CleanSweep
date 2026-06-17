@@ -36,6 +36,10 @@ public sealed class SafeDeleter
     /// <summary>True when deleting this path would be unsafe.</summary>
     public bool IsProtected(string path)
     {
+        // Empty/whitespace paths are never safe to delete. (On Windows GetFullPath
+        // throws on whitespace; on Unix it doesn't, so guard before normalizing.)
+        if (string.IsNullOrWhiteSpace(path)) return true;
+
         var p = Normalize(path);
         if (string.IsNullOrEmpty(p) || p.Length <= 3) return true;
 
