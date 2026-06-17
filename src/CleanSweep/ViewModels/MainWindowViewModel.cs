@@ -25,6 +25,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly ScanEngine _engine = new();
     private readonly IMemoryManager _memory = MemoryManagerFactory.Current;
     private readonly AiItemExplainer _explainer = ItemExplainerFactory.Create();
+    private readonly IDialogService _dialogs;
     private CancellationTokenSource? _cts;
 
     public ObservableCollection<CategoryViewModel> Categories { get; } = new();
@@ -80,6 +81,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel(IDialogService dialogs)
     {
+        _dialogs = dialogs;
         Duplicates = new DuplicatesViewModel(_engine, PlatformPaths.Current, dialogs);
         Apps = new AppsViewModel(AppInventory.Create(), dialogs);
         Startup = new StartupViewModel(StartupManager.Create(), dialogs);
@@ -134,6 +136,13 @@ public partial class MainWindowViewModel : ViewModelBase
         if (IsBusy || !HasResults) return;
         var selected = Categories.SelectMany(c => c.SelectedModels).ToList();
         if (selected.Count == 0) { StatusText = "Select something to clean first."; return; }
+
+        long bytes = selected.Sum(i => i.SizeBytes);
+        bool confirmed = await _dialogs.ConfirmAsync(
+            "Clean now?",
+            $"Permanently remove {selected.Count} item(s), freeing about {ByteSize.Human(bytes)}? Protected paths are always skipped.",
+            "Clean", destructive: true);
+        if (!confirmed) return;
 
         IsBusy = true;
         _cts = new CancellationTokenSource();

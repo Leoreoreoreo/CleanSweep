@@ -11,20 +11,20 @@
 
     <Application.Resources>
         <ResourceDictionary>
-            <!-- Cohesive emerald/teal accent (overrides FluentTheme's system accent palette) -->
-            <Color x:Key="SystemAccentColor">#0E9F6E</Color>
-            <Color x:Key="SystemAccentColorDark1">#0C8C61</Color>
-            <Color x:Key="SystemAccentColorDark2">#0A7853</Color>
-            <Color x:Key="SystemAccentColorDark3">#086344</Color>
-            <Color x:Key="SystemAccentColorLight1">#2FB587</Color>
-            <Color x:Key="SystemAccentColorLight2">#57C39E</Color>
-            <Color x:Key="SystemAccentColorLight3">#80D2B5</Color>
+            <!-- Blue "tech" accent (overrides FluentTheme's system accent palette) -->
+            <Color x:Key="SystemAccentColor">#2F6FED</Color>
+            <Color x:Key="SystemAccentColorDark1">#2861D6</Color>
+            <Color x:Key="SystemAccentColorDark2">#2153BC</Color>
+            <Color x:Key="SystemAccentColorDark3">#1B459C</Color>
+            <Color x:Key="SystemAccentColorLight1">#5588F1</Color>
+            <Color x:Key="SystemAccentColorLight2">#7BA3F4</Color>
+            <Color x:Key="SystemAccentColorLight3">#A3C0F8</Color>
 
             <LinearGradientBrush x:Key="AccentBrush" StartPoint="0%,0%" EndPoint="100%,100%">
-                <GradientStop Color="#10B981" Offset="0"/>
-                <GradientStop Color="#0D9488" Offset="1"/>
+                <GradientStop Color="#3B82F6" Offset="0"/>
+                <GradientStop Color="#06B6D4" Offset="1"/>
             </LinearGradientBrush>
-            <SolidColorBrush x:Key="AccentSolidBrush" Color="#0E9F6E"/>
+            <SolidColorBrush x:Key="AccentSolidBrush" Color="#2F6FED"/>
             <SolidColorBrush x:Key="DangerBrush" Color="#E5554D"/>
             <SolidColorBrush x:Key="DangerBrushHover" Color="#D6453D"/>
 
@@ -51,9 +51,9 @@
             <ResourceDictionary.ThemeDictionaries>
                 <!-- Light "liquid glass" palette -->
                 <ResourceDictionary x:Key="Light">
-                    <Color x:Key="AcrylicTintColor">#EEF1F7</Color>
-                    <SolidColorBrush x:Key="CardBrush" Color="#FFFFFF" Opacity="0.45"/>
-                    <SolidColorBrush x:Key="CardBrushHover" Color="#FFFFFF" Opacity="0.62"/>
+                    <Color x:Key="AcrylicTintColor">#E9EFFB</Color>
+                    <SolidColorBrush x:Key="CardBrush" Color="#FFFFFF" Opacity="0.48"/>
+                    <SolidColorBrush x:Key="CardBrushHover" Color="#FFFFFF" Opacity="0.66"/>
                     <LinearGradientBrush x:Key="CardBorderBrush" StartPoint="0%,0%" EndPoint="0%,100%">
                         <GradientStop Color="#E8FFFFFF" Offset="0"/>
                         <GradientStop Color="#5CFFFFFF" Offset="1"/>
@@ -62,21 +62,21 @@
                     <SolidColorBrush x:Key="HairlineBrush" Color="#000000" Opacity="0.08"/>
                     <SolidColorBrush x:Key="TextPrimaryBrush" Color="#0F131B"/>
                     <SolidColorBrush x:Key="TextSecondaryBrush" Color="#0F131B" Opacity="0.6"/>
-                    <SolidColorBrush x:Key="NavSelectedBrush" Color="#0E9F6E" Opacity="0.14"/>
+                    <SolidColorBrush x:Key="NavSelectedBrush" Color="#2F6FED" Opacity="0.15"/>
                     <SolidColorBrush x:Key="NavHoverBrush" Color="#000000" Opacity="0.05"/>
-                    <SolidColorBrush x:Key="AccentTintBrush" Color="#0E9F6E" Opacity="0.13"/>
+                    <SolidColorBrush x:Key="AccentTintBrush" Color="#2F6FED" Opacity="0.14"/>
                     <!-- Lower alpha so the acrylic desktop-blur shows through as real glass depth -->
                     <LinearGradientBrush x:Key="GlassOverlayBrush" StartPoint="0%,0%" EndPoint="100%,100%">
-                        <GradientStop Color="#55CDEBE2" Offset="0"/>
-                        <GradientStop Color="#52C9E6EC" Offset="0.55"/>
-                        <GradientStop Color="#55D3ECDE" Offset="1"/>
+                        <GradientStop Color="#50D6E6FF" Offset="0"/>
+                        <GradientStop Color="#4DCFE2FF" Offset="0.55"/>
+                        <GradientStop Color="#50DCEBFF" Offset="1"/>
                     </LinearGradientBrush>
                 </ResourceDictionary>
                 <!-- Dark "liquid glass" palette -->
                 <ResourceDictionary x:Key="Dark">
-                    <Color x:Key="AcrylicTintColor">#15171C</Color>
-                    <SolidColorBrush x:Key="CardBrush" Color="#FFFFFF" Opacity="0.09"/>
-                    <SolidColorBrush x:Key="CardBrushHover" Color="#FFFFFF" Opacity="0.14"/>
+                    <Color x:Key="AcrylicTintColor">#0E1626</Color>
+                    <SolidColorBrush x:Key="CardBrush" Color="#FFFFFF" Opacity="0.08"/>
+                    <SolidColorBrush x:Key="CardBrushHover" Color="#FFFFFF" Opacity="0.13"/>
                     <LinearGradientBrush x:Key="CardBorderBrush" StartPoint="0%,0%" EndPoint="0%,100%">
                         <GradientStop Color="#38FFFFFF" Offset="0"/>
                         <GradientStop Color="#10FFFFFF" Offset="1"/>
@@ -85,14 +85,14 @@
                     <SolidColorBrush x:Key="HairlineBrush" Color="#FFFFFF" Opacity="0.10"/>
                     <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F2F4F8"/>
                     <SolidColorBrush x:Key="TextSecondaryBrush" Color="#F2F4F8" Opacity="0.62"/>
-                    <SolidColorBrush x:Key="NavSelectedBrush" Color="#2FB587" Opacity="0.22"/>
+                    <SolidColorBrush x:Key="NavSelectedBrush" Color="#5588F1" Opacity="0.24"/>
                     <SolidColorBrush x:Key="NavHoverBrush" Color="#FFFFFF" Opacity="0.06"/>
-                    <SolidColorBrush x:Key="AccentTintBrush" Color="#2FB587" Opacity="0.18"/>
+                    <SolidColorBrush x:Key="AccentTintBrush" Color="#5588F1" Opacity="0.20"/>
                     <!-- Lower alpha so the acrylic desktop-blur shows through as real glass depth -->
                     <LinearGradientBrush x:Key="GlassOverlayBrush" StartPoint="0%,0%" EndPoint="100%,100%">
-                        <GradientStop Color="#70102A2C" Offset="0"/>
-                        <GradientStop Color="#6C0F2630" Offset="0.55"/>
-                        <GradientStop Color="#7011302A" Offset="1"/>
+                        <GradientStop Color="#6E0E1B33" Offset="0"/>
+                        <GradientStop Color="#6A0C1830" Offset="0.55"/>
+                        <GradientStop Color="#6E101F3C" Offset="1"/>
                     </LinearGradientBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>

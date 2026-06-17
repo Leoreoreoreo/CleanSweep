@@ -13,6 +13,7 @@ using CleanSweep.Core.Cleaning;
 using CleanSweep.Core.Duplicates;
 using CleanSweep.Core.Models;
 using CleanSweep.Core.Platform;
+using CleanSweep.Core.Services;
 using CleanSweep.Services;
 
 namespace CleanSweep.ViewModels;
@@ -178,6 +179,10 @@ public partial class DuplicateFileViewModel : ObservableObject
     public long SizeBytes => Model.SizeBytes;
     public string SizeText => ByteSize.Human(Model.SizeBytes);
     public string ModifiedText => Model.LastModified?.ToLocalTime().ToString("yyyy-MM-dd") ?? "";
+    public bool CanReveal => FileReveal.CanReveal(Model.Path);
+
+    [RelayCommand] private void Reveal() => FileReveal.Reveal(Model.Path);
+    [RelayCommand] private void Open() => FileReveal.Open(Model.Path);
 
     public CleanItem ToCleanItem() => new()
     {

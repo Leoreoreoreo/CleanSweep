@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using CleanSweep.Core;
 using CleanSweep.Core.AI;
 using CleanSweep.Core.Models;
+using CleanSweep.Core.Services;
 
 namespace CleanSweep.ViewModels;
 
@@ -34,6 +35,10 @@ public partial class CleanItemViewModel : ObservableObject
     public string Path => Model.Path;
     public long SizeBytes => Model.SizeBytes;
     public string SizeText => ByteSize.Human(Model.SizeBytes);
+    public bool CanReveal => FileReveal.CanReveal(Model.Path);
+
+    [RelayCommand] private void Reveal() => FileReveal.Reveal(Model.Path);
+    [RelayCommand] private void Open() => FileReveal.Open(Model.Path);
 
     public bool HasExplanation => Explanation is not null;
     public bool ShowOfflineHint => Explanation is { FromAi: false } && !_explainer.IsAiEnabled;

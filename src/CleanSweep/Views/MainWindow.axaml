@@ -7,8 +7,8 @@
         x:Class="CleanSweep.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="CleanSweep" Width="980" Height="700"
-        MinWidth="800" MinHeight="560"
+        Title="CleanSweep" Width="1060" Height="760"
+        MinWidth="880" MinHeight="600"
         Background="Transparent"
         TransparencyLevelHint="AcrylicBlur, Mica, Blur">
 
@@ -22,7 +22,13 @@
 
         <!-- A single scan item, with the "What is this?" AI flyout -->
         <DataTemplate DataType="vm:CleanItemViewModel" x:DataType="vm:CleanItemViewModel">
-            <StackPanel Margin="6,3">
+            <StackPanel Margin="6,5">
+                <StackPanel.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Open" Command="{Binding OpenCommand}" IsEnabled="{Binding CanReveal}"/>
+                        <MenuItem Header="Reveal in file manager" Command="{Binding RevealCommand}" IsEnabled="{Binding CanReveal}"/>
+                    </ContextMenu>
+                </StackPanel.ContextMenu>
                 <Grid ColumnDefinitions="Auto,*,Auto,Auto">
                     <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center"/>
                     <StackPanel Grid.Column="1" Margin="4,0,0,0" VerticalAlignment="Center">
@@ -48,13 +54,13 @@
                             <TextBlock Text="Asking the AI..." Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
                         </StackPanel>
                         <StackPanel IsVisible="{Binding HasExplanation}" Spacing="6">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <Border CornerRadius="9" Padding="9,2" VerticalAlignment="Center" Background="{Binding RiskBrush}">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <Border Grid.Column="0" CornerRadius="9" Padding="9,2" VerticalAlignment="Top" Background="{Binding RiskBrush}">
                                     <TextBlock Text="{Binding RiskText}" Foreground="White" FontSize="11" FontWeight="SemiBold"/>
                                 </Border>
-                                <TextBlock Text="{Binding Explanation.Summary}" FontWeight="SemiBold" VerticalAlignment="Center"
-                                           TextWrapping="Wrap" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            </StackPanel>
+                                <TextBlock Grid.Column="1" Margin="8,0,0,0" Text="{Binding Explanation.Summary}" FontWeight="SemiBold"
+                                           VerticalAlignment="Center" TextWrapping="Wrap" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </Grid>
                             <TextBlock Text="{Binding Explanation.Reason}" TextWrapping="Wrap" FontSize="12"
                                        Foreground="{DynamicResource TextSecondaryBrush}"/>
                             <TextBlock Text="{Binding Explanation.Recommendation}" FontStyle="Italic" TextWrapping="Wrap"
@@ -69,7 +75,7 @@
 
         <!-- A category, as a glass card with an expander -->
         <DataTemplate DataType="vm:CategoryViewModel" x:DataType="vm:CategoryViewModel">
-            <Border Classes="card" Margin="0,0,0,10" Padding="6,2">
+            <Border Classes="card" Margin="0,0,0,13" Padding="8,5">
                 <Expander Classes="flat" IsExpanded="{Binding IsExpanded}" Background="Transparent" BorderThickness="0"
                           HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                     <Expander.Header>
@@ -95,7 +101,7 @@
 
         <!-- A duplicate group -->
         <DataTemplate DataType="vm:DuplicateGroupViewModel" x:DataType="vm:DuplicateGroupViewModel">
-            <Border Classes="card" Margin="0,0,0,10" Padding="6,2">
+            <Border Classes="card" Margin="0,0,0,13" Padding="8,5">
                 <Expander Classes="flat" IsExpanded="{Binding IsExpanded}" Background="Transparent" BorderThickness="0"
                           HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                     <Expander.Header>
@@ -115,7 +121,13 @@
 
         <!-- A duplicate file row -->
         <DataTemplate DataType="vm:DuplicateFileViewModel" x:DataType="vm:DuplicateFileViewModel">
-            <Grid ColumnDefinitions="Auto,*,Auto,Auto" Margin="14,3,8,3">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto" Margin="14,5,8,5">
+                <Grid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Open" Command="{Binding OpenCommand}" IsEnabled="{Binding CanReveal}"/>
+                        <MenuItem Header="Reveal in file manager" Command="{Binding RevealCommand}" IsEnabled="{Binding CanReveal}"/>
+                    </ContextMenu>
+                </Grid.ContextMenu>
                 <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center"/>
                 <StackPanel Grid.Column="1" Margin="4,0,0,0" VerticalAlignment="Center">
                     <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource TextPrimaryBrush}"/>
@@ -130,7 +142,7 @@
 
         <!-- An installed application -->
         <DataTemplate DataType="vm:AppViewModel" x:DataType="vm:AppViewModel">
-            <Border Classes="card" Margin="0,0,0,8" Padding="14,10">
+            <Border Classes="card" Margin="0,0,0,10" Padding="16,13">
                 <Grid ColumnDefinitions="*,Auto,Auto">
                     <StackPanel Grid.Column="0" VerticalAlignment="Center">
                         <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
@@ -148,7 +160,7 @@
 
         <!-- A startup item -->
         <DataTemplate DataType="vm:StartupItemViewModel" x:DataType="vm:StartupItemViewModel">
-            <Border Classes="card" Margin="0,0,0,8" Padding="14,10">
+            <Border Classes="card" Margin="0,0,0,10" Padding="16,13">
                 <Grid ColumnDefinitions="*,Auto,Auto">
                     <StackPanel Grid.Column="0" VerticalAlignment="Center">
                         <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
@@ -187,24 +199,24 @@
             <Ellipse Canvas.Left="-150" Canvas.Top="-130" Width="560" Height="560">
                 <Ellipse.Fill>
                     <RadialGradientBrush>
-                        <GradientStop Color="#5A10B981" Offset="0"/>
-                        <GradientStop Color="#0010B981" Offset="1"/>
+                        <GradientStop Color="#603B82F6" Offset="0"/>
+                        <GradientStop Color="#003B82F6" Offset="1"/>
                     </RadialGradientBrush>
                 </Ellipse.Fill>
             </Ellipse>
             <Ellipse Canvas.Right="-180" Canvas.Bottom="-180" Width="660" Height="660">
                 <Ellipse.Fill>
                     <RadialGradientBrush>
-                        <GradientStop Color="#4E0EA5C9" Offset="0"/>
-                        <GradientStop Color="#000EA5C9" Offset="1"/>
+                        <GradientStop Color="#5206B6D4" Offset="0"/>
+                        <GradientStop Color="#0006B6D4" Offset="1"/>
                     </RadialGradientBrush>
                 </Ellipse.Fill>
             </Ellipse>
             <Ellipse Canvas.Right="140" Canvas.Top="-220" Width="500" Height="500">
                 <Ellipse.Fill>
                     <RadialGradientBrush>
-                        <GradientStop Color="#3E22D3A8" Offset="0"/>
-                        <GradientStop Color="#0022D3A8" Offset="1"/>
+                        <GradientStop Color="#4238BDF8" Offset="0"/>
+                        <GradientStop Color="#0038BDF8" Offset="1"/>
                     </RadialGradientBrush>
                 </Ellipse.Fill>
             </Ellipse>
@@ -285,7 +297,7 @@
             <Grid Grid.Column="1">
 
                 <!-- Smart Scan -->
-                <DockPanel Classes="page" Opacity="{Binding IsSmartScanSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsSmartScanSection}" Margin="22,20">
+                <DockPanel Classes="page" Opacity="{Binding IsSmartScanSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsSmartScanSection}" Margin="28,24">
                     <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Smart Scan" Classes="h1"/>
@@ -333,7 +345,7 @@
                 </DockPanel>
 
                 <!-- Large Files -->
-                <DockPanel Classes="page" Opacity="{Binding IsLargeFilesSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsLargeFilesSection}" Margin="22,20">
+                <DockPanel Classes="page" Opacity="{Binding IsLargeFilesSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsLargeFilesSection}" Margin="28,24">
                     <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Large Files" Classes="h1"/>
@@ -359,7 +371,7 @@
                 </DockPanel>
 
                 <!-- Duplicates -->
-                <DockPanel Classes="page" Opacity="{Binding IsDuplicatesSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsDuplicatesSection}" Margin="22,20">
+                <DockPanel Classes="page" Opacity="{Binding IsDuplicatesSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsDuplicatesSection}" Margin="28,24">
                     <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Duplicate Files" Classes="h1"/>
@@ -385,7 +397,7 @@
                 </DockPanel>
 
                 <!-- Apps -->
-                <DockPanel Classes="page" Opacity="{Binding IsAppsSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsAppsSection}" Margin="22,20">
+                <DockPanel Classes="page" Opacity="{Binding IsAppsSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsAppsSection}" Margin="28,24">
                     <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Applications" Classes="h1"/>
@@ -406,7 +418,7 @@
                 </DockPanel>
 
                 <!-- Startup -->
-                <DockPanel Classes="page" Opacity="{Binding IsStartupSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsStartupSection}" Margin="22,20">
+                <DockPanel Classes="page" Opacity="{Binding IsStartupSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsStartupSection}" Margin="28,24">
                     <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Startup Items" Classes="h1"/>
@@ -428,7 +440,7 @@
                 </DockPanel>
 
                 <!-- Memory -->
-                <DockPanel Classes="page" Opacity="{Binding IsMemorySection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsMemorySection}" Margin="22,20">
+                <DockPanel Classes="page" Opacity="{Binding IsMemorySection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsMemorySection}" Margin="28,24">
                     <StackPanel DockPanel.Dock="Top" Margin="0,0,0,16">
                         <TextBlock Text="Memory" Classes="h1"/>
                         <TextBlock Text="Free up RAM by trimming process working sets" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
@@ -449,7 +461,7 @@
                 </DockPanel>
 
                 <!-- Settings -->
-                <DockPanel Classes="page" Opacity="{Binding IsSettingsSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsSettingsSection}" Margin="22,20">
+                <DockPanel Classes="page" Opacity="{Binding IsSettingsSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsSettingsSection}" Margin="28,24">
                     <StackPanel DockPanel.Dock="Top" Margin="0,0,0,16">
                         <TextBlock Text="Settings" Classes="h1"/>
                         <TextBlock Text="Configure the AI &quot;What is this?&quot; explainer" FontSize="12"
