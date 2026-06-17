@@ -7,8 +7,11 @@ namespace CleanSweep.Services;
 /// <summary>User settings persisted locally (e.g. the Anthropic API key + model override).</summary>
 public sealed class AppSettings
 {
+    public string? Provider { get; set; }
     public string? ApiKey { get; set; }
     public string? Model { get; set; }
+    public string? BaseUrl { get; set; }
+    public string? Theme { get; set; }
 }
 
 /// <summary>Reads/writes <see cref="AppSettings"/> as JSON under the user's app-data folder.</summary>

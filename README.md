@@ -48,21 +48,20 @@ live before/after memory gauge.
 
 Not sure whether something is safe to delete? Click the **?** on any scan item for a
 short AI explanation — *what it is, whether it's safe to delete, why, and a
-recommendation* — shown with a colored risk badge (🟢 Safe / 🟡 Caution / 🔴 Risky).
+recommendation* — shown with a colored risk badge (Safe / Caution / Risky).
 
-- Powered by the official **Anthropic C# SDK** with Claude **structured output**.
-- Set `ANTHROPIC_API_KEY` in your environment to enable it.
+- **Bring any AI key.** Choose a provider in **Settings**: Anthropic (Claude, via the
+  official C# SDK), OpenAI, Google Gemini, or any **OpenAI-compatible** endpoint
+  (Groq, OpenRouter, DeepSeek, a local server…) by entering its base URL.
+- **Set it in-app** (Settings → paste key, pick model), or via environment variables
+  (`ANTHROPIC_API_KEY` / `OPENAI_API_KEY`, optional `CLEANSWEEP_AI_MODEL`). In-app
+  settings are stored locally and take effect immediately.
+- Uses **structured output** so responses are compact and parse reliably; results are
+  cached in-memory.
 - **Degrades gracefully:** with no key (or on any error) it falls back to a built-in
   offline heuristic for common items — it never crashes or blocks the UI.
-- Default model is `claude-opus-4-8`; override with the `CLEANSWEEP_AI_MODEL` env var
-  (e.g. `claude-haiku-4-5` for a cheaper/faster option). Results are cached in-memory.
 
-```bash
-# Windows (PowerShell)
-$env:ANTHROPIC_API_KEY = "sk-ant-..."
-# macOS / Linux
-export ANTHROPIC_API_KEY="sk-ant-..."
-```
+The app ships a translucent **liquid-glass** theme with a light/dark/system toggle.
 
 ## Run it
 

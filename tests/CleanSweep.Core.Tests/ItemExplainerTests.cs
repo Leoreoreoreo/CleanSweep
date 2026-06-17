@@ -48,11 +48,14 @@ public sealed class ItemExplainerTests
 
     // ---- Graceful degradation when the API key is absent (no network) ----
 
-    [Fact]
-    public async Task With_no_api_key_explainer_is_disabled_and_uses_offline_fallback()
+    [Theory]
+    [InlineData(AiProvider.Anthropic)]
+    [InlineData(AiProvider.OpenAI)]
+    [InlineData(AiProvider.Gemini)]
+    public async Task With_no_api_key_explainer_is_disabled_and_uses_offline_fallback(AiProvider provider)
     {
-        // null key -> never constructs a client, never hits the network.
-        var explainer = new AnthropicItemExplainer(apiKey: null, modelId: null, new HeuristicItemExplainer());
+        // No key -> never builds a client / never hits the network, for any provider.
+        var explainer = new AiItemExplainer(new AiSettings(provider, null, null, null), new HeuristicItemExplainer());
 
         Assert.False(explainer.IsAiEnabled);
 
@@ -66,13 +69,23 @@ public sealed class ItemExplainerTests
     [Fact]
     public async Task With_no_api_key_results_are_cached_per_item()
     {
-        var explainer = new AnthropicItemExplainer(apiKey: "", modelId: null, new CountingExplainer());
+        var explainer = new AiItemExplainer(new AiSettings(AiProvider.OpenAI, "", null, null), new CountingExplainer());
         var item = Item("temp.tmp", CleanCategory.TempFiles);
 
         var first = await explainer.ExplainAsync(item, CancellationToken.None);
         var second = await explainer.ExplainAsync(item, CancellationToken.None);
 
         Assert.Same(first, second); // second call served from cache
+    }
+
+    [Fact]
+    public void Reconfigure_can_switch_provider_at_runtime()
+    {
+        var explainer = new AiItemExplainer(new AiSettings(AiProvider.Anthropic, null, null, null), new HeuristicItemExplainer());
+        Assert.False(explainer.IsAiEnabled);
+
+        explainer.Configure(new AiSettings(AiProvider.OpenAI, "sk-test", "gpt-4o-mini", null));
+        Assert.True(explainer.IsAiEnabled); // key present -> enabled (no network call made here)
     }
 
     /// <summary>A stand-in fallback that returns a fresh instance per call, to prove caching.</summary>

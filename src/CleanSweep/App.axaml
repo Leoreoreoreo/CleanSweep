@@ -11,19 +11,20 @@
 
     <Application.Resources>
         <ResourceDictionary>
-            <!-- Cohesive accent (overrides FluentTheme's system accent palette) -->
-            <Color x:Key="SystemAccentColor">#3B82F6</Color>
-            <Color x:Key="SystemAccentColorDark1">#2F6BEA</Color>
-            <Color x:Key="SystemAccentColorDark2">#2A5FD0</Color>
-            <Color x:Key="SystemAccentColorDark3">#244FAD</Color>
-            <Color x:Key="SystemAccentColorLight1">#5B97F7</Color>
-            <Color x:Key="SystemAccentColorLight2">#7DA9F9</Color>
-            <Color x:Key="SystemAccentColorLight3">#9FC0FB</Color>
+            <!-- Cohesive emerald/teal accent (overrides FluentTheme's system accent palette) -->
+            <Color x:Key="SystemAccentColor">#0E9F6E</Color>
+            <Color x:Key="SystemAccentColorDark1">#0C8C61</Color>
+            <Color x:Key="SystemAccentColorDark2">#0A7853</Color>
+            <Color x:Key="SystemAccentColorDark3">#086344</Color>
+            <Color x:Key="SystemAccentColorLight1">#2FB587</Color>
+            <Color x:Key="SystemAccentColorLight2">#57C39E</Color>
+            <Color x:Key="SystemAccentColorLight3">#80D2B5</Color>
 
             <LinearGradientBrush x:Key="AccentBrush" StartPoint="0%,0%" EndPoint="100%,100%">
-                <GradientStop Color="#3B82F6" Offset="0"/>
-                <GradientStop Color="#6366F1" Offset="1"/>
+                <GradientStop Color="#10B981" Offset="0"/>
+                <GradientStop Color="#0D9488" Offset="1"/>
             </LinearGradientBrush>
+            <SolidColorBrush x:Key="AccentSolidBrush" Color="#0E9F6E"/>
             <SolidColorBrush x:Key="DangerBrush" Color="#E5554D"/>
             <SolidColorBrush x:Key="DangerBrushHover" Color="#D6453D"/>
 
@@ -44,6 +45,7 @@
             <StreamGeometry x:Key="IconTrash">M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z</StreamGeometry>
             <StreamGeometry x:Key="IconGlobe">M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M17.9,17.39C17.64,16.58 16.9,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39Z</StreamGeometry>
             <StreamGeometry x:Key="IconWrench">M22.7,19L13.6,9.9C14.5,7.6 14,4.9 12.1,3C10.1,1 7.1,0.6 4.7,1.7L9,6L6,9L1.6,4.7C0.4,7.1 0.9,10.1 2.9,12.1C4.8,14 7.5,14.5 9.8,13.6L18.9,22.7C19.3,23.1 19.9,23.1 20.3,22.7L22.6,20.4C23.1,20 23.1,19.3 22.7,19Z</StreamGeometry>
+            <StreamGeometry x:Key="IconSparkle">M12,2L14.4,9.6L22,12L14.4,14.4L12,22L9.6,14.4L2,12L9.6,9.6Z</StreamGeometry>
 
             <ResourceDictionary.ThemeDictionaries>
                 <!-- Light "liquid glass" palette -->
@@ -56,13 +58,14 @@
                     <SolidColorBrush x:Key="HairlineBrush" Color="#000000" Opacity="0.08"/>
                     <SolidColorBrush x:Key="TextPrimaryBrush" Color="#0F131B"/>
                     <SolidColorBrush x:Key="TextSecondaryBrush" Color="#0F131B" Opacity="0.6"/>
-                    <SolidColorBrush x:Key="NavSelectedBrush" Color="#3B82F6" Opacity="0.18"/>
+                    <SolidColorBrush x:Key="NavSelectedBrush" Color="#0E9F6E" Opacity="0.14"/>
                     <SolidColorBrush x:Key="NavHoverBrush" Color="#000000" Opacity="0.05"/>
+                    <SolidColorBrush x:Key="AccentTintBrush" Color="#0E9F6E" Opacity="0.13"/>
                     <!-- Lower alpha so the acrylic desktop-blur shows through as real glass depth -->
                     <LinearGradientBrush x:Key="GlassOverlayBrush" StartPoint="0%,0%" EndPoint="100%,100%">
-                        <GradientStop Color="#8FBFD6FF" Offset="0"/>
-                        <GradientStop Color="#8AC7C2FF" Offset="0.5"/>
-                        <GradientStop Color="#8FB9E6FF" Offset="1"/>
+                        <GradientStop Color="#8CCDEBE2" Offset="0"/>
+                        <GradientStop Color="#8AC9E6EC" Offset="0.55"/>
+                        <GradientStop Color="#8CD3ECDE" Offset="1"/>
                     </LinearGradientBrush>
                 </ResourceDictionary>
                 <!-- Dark "liquid glass" palette -->
@@ -75,13 +78,14 @@
                     <SolidColorBrush x:Key="HairlineBrush" Color="#FFFFFF" Opacity="0.10"/>
                     <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F2F4F8"/>
                     <SolidColorBrush x:Key="TextSecondaryBrush" Color="#F2F4F8" Opacity="0.62"/>
-                    <SolidColorBrush x:Key="NavSelectedBrush" Color="#6E9BFF" Opacity="0.26"/>
+                    <SolidColorBrush x:Key="NavSelectedBrush" Color="#2FB587" Opacity="0.22"/>
                     <SolidColorBrush x:Key="NavHoverBrush" Color="#FFFFFF" Opacity="0.06"/>
+                    <SolidColorBrush x:Key="AccentTintBrush" Color="#2FB587" Opacity="0.18"/>
                     <!-- Lower alpha so the acrylic desktop-blur shows through as real glass depth -->
                     <LinearGradientBrush x:Key="GlassOverlayBrush" StartPoint="0%,0%" EndPoint="100%,100%">
-                        <GradientStop Color="#9921335E" Offset="0"/>
-                        <GradientStop Color="#94281C46" Offset="0.5"/>
-                        <GradientStop Color="#99163049" Offset="1"/>
+                        <GradientStop Color="#99102A2C" Offset="0"/>
+                        <GradientStop Color="#940F2630" Offset="0.55"/>
+                        <GradientStop Color="#9911302A" Offset="1"/>
                     </LinearGradientBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
@@ -173,11 +177,40 @@
         </Style>
         <Style Selector="ListBox.nav ListBoxItem:selected /template/ ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource NavSelectedBrush}"/>
-            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="BorderBrush" Value="{StaticResource AccentSolidBrush}"/>
+            <Setter Property="BorderThickness" Value="3,0,0,0"/>
+            <Setter Property="CornerRadius" Value="9"/>
         </Style>
         <Style Selector="ListBox.nav ListBoxItem:selected">
-            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource AccentSolidBrush}"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <!-- Typography -->
+        <Style Selector="TextBlock.h1">
+            <Setter Property="FontSize" Value="25"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="LetterSpacing" Value="-0.6"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        </Style>
+        <Style Selector="TextBlock.subtitle">
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="Margin" Value="0,3,0,0"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+        </Style>
+        <Style Selector="TextBlock.wordmark">
+            <Setter Property="FontSize" Value="19"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="LetterSpacing" Value="-0.5"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        </Style>
+
+        <!-- Category icon chip -->
+        <Style Selector="Border.iconchip">
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Background" Value="{DynamicResource AccentTintBrush}"/>
         </Style>
 
         <!-- Expander: flatten chrome so it reads as part of the glass -->

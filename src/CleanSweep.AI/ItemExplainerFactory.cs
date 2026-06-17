@@ -3,16 +3,23 @@ using CleanSweep.Core.AI;
 namespace CleanSweep.AI;
 
 /// <summary>
-/// Builds the app's <see cref="IItemExplainer"/>: an Anthropic-backed explainer
-/// that reads ANTHROPIC_API_KEY (and an optional CLEANSWEEP_AI_MODEL override),
-/// with the offline heuristic as its fallback. Safe to call with no key set.
+/// Builds the app's explainer from environment defaults (ANTHROPIC_API_KEY or
+/// OPENAI_API_KEY, plus optional CLEANSWEEP_AI_MODEL). Settings saved in-app
+/// override these at runtime. The offline heuristic is always the fallback.
 /// </summary>
 public static class ItemExplainerFactory
 {
-    public static AnthropicItemExplainer Create()
+    public static AiItemExplainer Create()
     {
-        var apiKey = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
+        var anthropicKey = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
+        var openAiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
         var model = Environment.GetEnvironmentVariable("CLEANSWEEP_AI_MODEL");
-        return new AnthropicItemExplainer(apiKey, model, new HeuristicItemExplainer());
+
+        AiSettings settings =
+            !string.IsNullOrWhiteSpace(anthropicKey) ? new AiSettings(AiProvider.Anthropic, anthropicKey, model, null)
+          : !string.IsNullOrWhiteSpace(openAiKey)    ? new AiSettings(AiProvider.OpenAI, openAiKey, model, null)
+          : new AiSettings(AiProvider.Anthropic, null, model, null);
+
+        return new AiItemExplainer(settings, new HeuristicItemExplainer());
     }
 }

@@ -24,7 +24,7 @@ public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly ScanEngine _engine = new();
     private readonly IMemoryManager _memory = MemoryManagerFactory.Current;
-    private readonly AnthropicItemExplainer _explainer = ItemExplainerFactory.Create();
+    private readonly AiItemExplainer _explainer = ItemExplainerFactory.Create();
     private CancellationTokenSource? _cts;
 
     public ObservableCollection<CategoryViewModel> Categories { get; } = new();

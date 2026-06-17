@@ -75,8 +75,10 @@
                     <Expander.Header>
                         <Grid ColumnDefinitions="Auto,Auto,*,Auto" MinWidth="560">
                             <CheckBox Grid.Column="0" IsThreeState="True" IsChecked="{Binding AllSelected, Mode=TwoWay}" VerticalAlignment="Center"/>
-                            <Path Grid.Column="1" Width="20" Height="20" Stretch="Uniform" Margin="2,0,0,0" VerticalAlignment="Center"
-                                  Data="{Binding Category, Converter={StaticResource CategoryIcon}}" Fill="{DynamicResource TextSecondaryBrush}"/>
+                            <Border Grid.Column="1" Classes="iconchip" Margin="4,0,0,0" VerticalAlignment="Center">
+                                <Path Width="19" Height="19" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                      Data="{Binding Category, Converter={StaticResource CategoryIcon}}" Fill="{DynamicResource AccentSolidBrush}"/>
+                            </Border>
                             <StackPanel Grid.Column="2" Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 <TextBlock Text="{Binding Description}" FontSize="11" TextTrimming="CharacterEllipsis"
@@ -185,10 +187,23 @@
             <!-- ============ Sidebar ============ -->
             <Border Grid.Column="0" Background="{DynamicResource SidebarBrush}"
                     BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="0,0,1,0">
-                <DockPanel Margin="14,20,14,16">
-                    <StackPanel DockPanel.Dock="Top" Margin="6,0,0,18">
-                        <TextBlock Text="🧹 CleanSweep" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBlock Text="Disk &amp; memory cleaner" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                <DockPanel Margin="14,18,14,14">
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="11" Margin="4,0,0,22">
+                        <Border Width="36" Height="36" CornerRadius="11" Background="{DynamicResource AccentBrush}">
+                            <Path Data="{StaticResource IconSparkle}" Fill="White" Width="19" Height="19" Stretch="Uniform"
+                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="CleanSweep" Classes="wordmark"/>
+                            <TextBlock Text="Disk &amp; memory cleaner" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel DockPanel.Dock="Bottom" Spacing="6" Margin="4,14,4,0">
+                        <TextBlock Text="APPEARANCE" FontSize="10" FontWeight="SemiBold" LetterSpacing="1"
+                                   Opacity="0.65" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <ComboBox ItemsSource="{Binding Settings.Themes}" SelectedIndex="{Binding Settings.ThemeIndex, Mode=TwoWay}"
+                                  HorizontalAlignment="Stretch"/>
                     </StackPanel>
 
                     <ListBox Classes="nav" SelectedIndex="{Binding SelectedSectionIndex, Mode=TwoWay}">
@@ -245,7 +260,7 @@
                 <DockPanel IsVisible="{Binding IsSmartScanSection}" Margin="22,20">
                     <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="Smart Scan" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="Smart Scan" Classes="h1"/>
                             <TextBlock Text="Find reclaimable space across your system" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
@@ -278,9 +293,13 @@
                     <ScrollViewer Margin="0,14,0,0">
                         <Panel>
                             <ItemsControl ItemsSource="{Binding Categories}"/>
-                            <TextBlock Text="No scan results yet — click Smart Scan to begin."
-                                       IsVisible="{Binding !HasResults}" Foreground="{DynamicResource TextSecondaryBrush}"
-                                       HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,70,0,0"/>
+                            <StackPanel IsVisible="{Binding !HasResults}" HorizontalAlignment="Center"
+                                        VerticalAlignment="Top" Margin="0,80,0,0" Spacing="14">
+                                <Path Data="{StaticResource IconSearch}" Width="56" Height="56" Stretch="Uniform"
+                                      HorizontalAlignment="Center" Fill="{DynamicResource TextSecondaryBrush}" Opacity="0.35"/>
+                                <TextBlock Text="No scan results yet — click Smart Scan to begin."
+                                           Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
+                            </StackPanel>
                         </Panel>
                     </ScrollViewer>
                 </DockPanel>
@@ -289,7 +308,7 @@
                 <DockPanel IsVisible="{Binding IsLargeFilesSection}" Margin="22,20">
                     <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="Large Files" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="Large Files" Classes="h1"/>
                             <TextBlock Text="Big files worth reviewing (≥ 100 MB) — opt in before deleting" FontSize="12"
                                        Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
@@ -300,9 +319,13 @@
                     <ScrollViewer Margin="0,14,0,0">
                         <Panel>
                             <ItemsControl ItemsSource="{Binding LargeFilesCategory.Items}" IsVisible="{Binding HasLargeFiles}"/>
-                            <TextBlock Text="Run a Smart Scan first to list large files here."
-                                       IsVisible="{Binding !HasLargeFiles}" Foreground="{DynamicResource TextSecondaryBrush}"
-                                       HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,70,0,0"/>
+                            <StackPanel IsVisible="{Binding !HasLargeFiles}" HorizontalAlignment="Center"
+                                        VerticalAlignment="Top" Margin="0,80,0,0" Spacing="14">
+                                <Path Data="{StaticResource IconFolder}" Width="56" Height="56" Stretch="Uniform"
+                                      HorizontalAlignment="Center" Fill="{DynamicResource TextSecondaryBrush}" Opacity="0.35"/>
+                                <TextBlock Text="Run a Smart Scan first to list large files here."
+                                           Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
+                            </StackPanel>
                         </Panel>
                     </ScrollViewer>
                 </DockPanel>
@@ -311,7 +334,7 @@
                 <DockPanel IsVisible="{Binding IsDuplicatesSection}" Margin="22,20">
                     <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="Duplicate Files" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="Duplicate Files" Classes="h1"/>
                             <TextBlock Text="Identical files found in more than one place" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
@@ -337,7 +360,7 @@
                 <DockPanel IsVisible="{Binding IsAppsSection}" Margin="22,20">
                     <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="Applications" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="Applications" Classes="h1"/>
                             <TextBlock Text="Uninstall apps you no longer need" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
                         <Button Grid.Column="1" Content="List Applications" Classes="accent" FontWeight="SemiBold" Padding="16,8"
@@ -358,7 +381,7 @@
                 <DockPanel IsVisible="{Binding IsStartupSection}" Margin="22,20">
                     <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="Startup Items" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="Startup Items" Classes="h1"/>
                             <TextBlock Text="Control what launches at login — disabling is reversible" FontSize="12"
                                        Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
@@ -379,7 +402,7 @@
                 <!-- Memory -->
                 <DockPanel IsVisible="{Binding IsMemorySection}" Margin="22,20">
                     <StackPanel DockPanel.Dock="Top" Margin="0,0,0,16">
-                        <TextBlock Text="Memory" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="Memory" Classes="h1"/>
                         <TextBlock Text="Free up RAM by trimming process working sets" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
                     </StackPanel>
 
@@ -400,7 +423,7 @@
                 <!-- Settings -->
                 <DockPanel IsVisible="{Binding IsSettingsSection}" Margin="22,20">
                     <StackPanel DockPanel.Dock="Top" Margin="0,0,0,16">
-                        <TextBlock Text="Settings" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="Settings" Classes="h1"/>
                         <TextBlock Text="Configure the AI &quot;What is this?&quot; explainer" FontSize="12"
                                    Foreground="{DynamicResource TextSecondaryBrush}"/>
                     </StackPanel>
@@ -408,19 +431,28 @@
                     <ScrollViewer>
                         <Border Classes="card" Padding="22" VerticalAlignment="Top" HorizontalAlignment="Left" MaxWidth="640">
                             <StackPanel Spacing="10">
-                                <TextBlock Text="Anthropic API key" FontWeight="SemiBold" FontSize="15"
+                                <TextBlock Text="AI provider" FontWeight="SemiBold" FontSize="15"
                                            Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
-                                           Text="Paste your key to turn on live AI explanations. Without one, CleanSweep uses a built-in offline heuristic. The key is stored locally on this machine only."/>
-                                <TextBox Text="{Binding Settings.ApiKey, Mode=TwoWay}" PlaceholderText="sk-ant-..."
+                                           Text="Use any provider's API key — Anthropic, OpenAI, Gemini, or any OpenAI-compatible endpoint. Without one, CleanSweep uses a built-in offline heuristic. Your key is stored locally on this machine only."/>
+                                <ComboBox ItemsSource="{Binding Settings.Providers}" HorizontalAlignment="Stretch"
+                                          SelectedIndex="{Binding Settings.SelectedProviderIndex, Mode=TwoWay}"/>
+
+                                <TextBlock Text="{Binding Settings.KeyLabel}" FontWeight="SemiBold" Margin="0,6,0,0"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBox Text="{Binding Settings.ApiKey, Mode=TwoWay}" PlaceholderText="paste your API key"
                                          FontFamily="Consolas,monospace"/>
+
+                                <TextBlock Text="Endpoint (base URL)" FontWeight="SemiBold" Margin="0,6,0,0"
+                                           IsVisible="{Binding Settings.ShowBaseUrl}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBox Text="{Binding Settings.BaseUrl, Mode=TwoWay}" IsVisible="{Binding Settings.ShowBaseUrl}"
+                                         PlaceholderText="https://your-endpoint/v1" FontFamily="Consolas,monospace"/>
 
                                 <TextBlock Text="Model (optional)" FontWeight="SemiBold" Margin="0,6,0,0"
                                            Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                <TextBox Text="{Binding Settings.Model, Mode=TwoWay}"
-                                         PlaceholderText="claude-opus-4-8 (default) — try claude-haiku-4-5 for cheaper/faster"/>
+                                <TextBox Text="{Binding Settings.Model, Mode=TwoWay}" PlaceholderText="{Binding Settings.ModelHint}"/>
 
-                                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,6,0,0">
+                                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
                                     <Button Content="Save" Classes="accent" FontWeight="SemiBold" Padding="20,8"
                                             Command="{Binding Settings.SaveCommand}"/>
                                     <Button Content="Clear key" Command="{Binding Settings.ClearKeyCommand}"/>
