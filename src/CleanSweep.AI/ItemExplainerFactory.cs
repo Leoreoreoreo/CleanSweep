@@ -9,7 +9,7 @@ namespace CleanSweep.AI;
 /// </summary>
 public static class ItemExplainerFactory
 {
-    public static IItemExplainer Create()
+    public static AnthropicItemExplainer Create()
     {
         var apiKey = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
         var model = Environment.GetEnvironmentVariable("CLEANSWEEP_AI_MODEL");

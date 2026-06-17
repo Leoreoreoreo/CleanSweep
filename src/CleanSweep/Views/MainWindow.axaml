@@ -31,9 +31,12 @@
                         <TextBlock Text="{Binding Path}" FontSize="10" TextTrimming="CharacterEllipsis"
                                    Foreground="{DynamicResource TextSecondaryBrush}"/>
                     </StackPanel>
-                    <Button Grid.Column="2" Content="?" Classes="icon" Width="26" Height="26" Padding="0"
-                            FontWeight="Bold" VerticalAlignment="Center" Margin="6,0,10,0"
-                            Command="{Binding ExplainCommand}" ToolTip.Tip="What is this? (AI)"/>
+                    <Button Grid.Column="2" Classes="icon" VerticalAlignment="Center" Margin="6,0,10,0"
+                            Command="{Binding ExplainCommand}" ToolTip.Tip="What is this? (AI explanation)"
+                            AutomationProperties.Name="What is this?">
+                        <Path Width="16" Height="16" Stretch="Uniform" Data="{StaticResource IconHelp}"
+                              Fill="{DynamicResource TextSecondaryBrush}"/>
+                    </Button>
                     <TextBlock Grid.Column="3" Text="{Binding SizeText}" VerticalAlignment="Center"
                                FontFamily="Consolas,monospace" Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </Grid>
@@ -56,7 +59,7 @@
                                        Foreground="{DynamicResource TextSecondaryBrush}"/>
                             <TextBlock Text="{Binding Explanation.Recommendation}" FontStyle="Italic" TextWrapping="Wrap"
                                        FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <TextBlock Text="AI explanations are off — set ANTHROPIC_API_KEY to enable."
+                            <TextBlock Text="Offline answer — add your API key in Settings to enable AI explanations."
                                        IsVisible="{Binding ShowOfflineHint}" Opacity="0.5" FontSize="10"/>
                         </StackPanel>
                     </StackPanel>
@@ -72,7 +75,8 @@
                     <Expander.Header>
                         <Grid ColumnDefinitions="Auto,Auto,*,Auto" MinWidth="560">
                             <CheckBox Grid.Column="0" IsThreeState="True" IsChecked="{Binding AllSelected, Mode=TwoWay}" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{Binding Glyph}" FontSize="20" VerticalAlignment="Center" Margin="2,0,0,0"/>
+                            <Path Grid.Column="1" Width="20" Height="20" Stretch="Uniform" Margin="2,0,0,0" VerticalAlignment="Center"
+                                  Data="{Binding Category, Converter={StaticResource CategoryIcon}}" Fill="{DynamicResource TextSecondaryBrush}"/>
                             <StackPanel Grid.Column="2" Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 <TextBlock Text="{Binding Description}" FontSize="11" TextTrimming="CharacterEllipsis"
@@ -169,9 +173,12 @@
             <ExperimentalAcrylicBorder.Material>
                 <ExperimentalAcrylicMaterial BackgroundSource="Digger"
                                              TintColor="{DynamicResource AcrylicTintColor}"
-                                             TintOpacity="1" MaterialOpacity="0.6"/>
+                                             TintOpacity="1" MaterialOpacity="0.55"/>
             </ExperimentalAcrylicBorder.Material>
         </ExperimentalAcrylicBorder>
+
+        <!-- Tinted glass sheet over the blurred backdrop — gives the frosted color -->
+        <Panel Background="{DynamicResource GlassOverlayBrush}" IsHitTestVisible="False"/>
 
         <Grid ColumnDefinitions="236,*">
 
@@ -186,39 +193,45 @@
 
                     <ListBox Classes="nav" SelectedIndex="{Binding SelectedSectionIndex, Mode=TwoWay}">
                         <ListBoxItem>
-                            <StackPanel Orientation="Horizontal" Spacing="11">
-                                <TextBlock Text="🔍" FontSize="15" VerticalAlignment="Center"/>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Path Classes="navicon" Data="{StaticResource IconSearch}" Fill="{Binding $parent[ListBoxItem].Foreground}"/>
                                 <TextBlock Text="Smart Scan" VerticalAlignment="Center"/>
                             </StackPanel>
                         </ListBoxItem>
                         <ListBoxItem>
-                            <StackPanel Orientation="Horizontal" Spacing="11">
-                                <TextBlock Text="📂" FontSize="15" VerticalAlignment="Center"/>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Path Classes="navicon" Data="{StaticResource IconFolder}" Fill="{Binding $parent[ListBoxItem].Foreground}"/>
                                 <TextBlock Text="Large Files" VerticalAlignment="Center"/>
                             </StackPanel>
                         </ListBoxItem>
                         <ListBoxItem>
-                            <StackPanel Orientation="Horizontal" Spacing="11">
-                                <TextBlock Text="👯" FontSize="15" VerticalAlignment="Center"/>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Path Classes="navicon" Data="{StaticResource IconCopy}" Fill="{Binding $parent[ListBoxItem].Foreground}"/>
                                 <TextBlock Text="Duplicates" VerticalAlignment="Center"/>
                             </StackPanel>
                         </ListBoxItem>
                         <ListBoxItem>
-                            <StackPanel Orientation="Horizontal" Spacing="11">
-                                <TextBlock Text="📦" FontSize="15" VerticalAlignment="Center"/>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Path Classes="navicon" Data="{StaticResource IconApps}" Fill="{Binding $parent[ListBoxItem].Foreground}"/>
                                 <TextBlock Text="Apps" VerticalAlignment="Center"/>
                             </StackPanel>
                         </ListBoxItem>
                         <ListBoxItem>
-                            <StackPanel Orientation="Horizontal" Spacing="11">
-                                <TextBlock Text="🚀" FontSize="15" VerticalAlignment="Center"/>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Path Classes="navicon" Data="{StaticResource IconPower}" Fill="{Binding $parent[ListBoxItem].Foreground}"/>
                                 <TextBlock Text="Startup" VerticalAlignment="Center"/>
                             </StackPanel>
                         </ListBoxItem>
                         <ListBoxItem>
-                            <StackPanel Orientation="Horizontal" Spacing="11">
-                                <TextBlock Text="🧠" FontSize="15" VerticalAlignment="Center"/>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Path Classes="navicon" Data="{StaticResource IconMemory}" Fill="{Binding $parent[ListBoxItem].Foreground}"/>
                                 <TextBlock Text="Memory" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                        <ListBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Path Classes="navicon" Data="{StaticResource IconCog}" Fill="{Binding $parent[ListBoxItem].Foreground}"/>
+                                <TextBlock Text="Settings" VerticalAlignment="Center"/>
                             </StackPanel>
                         </ListBoxItem>
                     </ListBox>
@@ -236,7 +249,7 @@
                             <TextBlock Text="Find reclaimable space across your system" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Button Content="🔍  Smart Scan" Classes="accent" FontWeight="SemiBold" Padding="18,9"
+                            <Button Content="Smart Scan" Classes="accent" FontWeight="SemiBold" Padding="18,9"
                                     Command="{Binding ScanCommand}" IsEnabled="{Binding !IsBusy}"/>
                             <Button Content="Cancel" Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}"/>
                         </StackPanel>
@@ -257,7 +270,7 @@
                                     <Run Text="reclaimable"/>
                                 </TextBlock>
                             </StackPanel>
-                            <Button Grid.Column="1" Content="🧹  Clean" Classes="accent" FontWeight="Bold"
+                            <Button Grid.Column="1" Content="Clean" Classes="accent" FontWeight="Bold"
                                     Padding="22,10" Command="{Binding CleanCommand}" IsEnabled="{Binding HasResults}"/>
                         </Grid>
                     </Border>
@@ -280,7 +293,7 @@
                             <TextBlock Text="Big files worth reviewing (≥ 100 MB) — opt in before deleting" FontSize="12"
                                        Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
-                        <Button Grid.Column="1" Content="🧹  Clean" Classes="accent" FontWeight="Bold" Padding="20,9"
+                        <Button Grid.Column="1" Content="Clean" Classes="accent" FontWeight="Bold" Padding="20,9"
                                 VerticalAlignment="Center" Command="{Binding CleanCommand}" IsEnabled="{Binding HasResults}"/>
                     </Grid>
 
@@ -302,10 +315,10 @@
                             <TextBlock Text="Identical files found in more than one place" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Button Content="🔍  Find Duplicates" Classes="accent" FontWeight="SemiBold" Padding="16,8"
+                            <Button Content="Find Duplicates" Classes="accent" FontWeight="SemiBold" Padding="16,8"
                                     Command="{Binding Duplicates.ScanCommand}" IsEnabled="{Binding !Duplicates.IsBusy}"/>
                             <Button Content="Cancel" Command="{Binding Duplicates.CancelCommand}" IsVisible="{Binding Duplicates.IsBusy}"/>
-                            <Button Content="🗑  Delete selected" Classes="danger"
+                            <Button Content="Delete selected" Classes="danger"
                                     Command="{Binding Duplicates.DeleteSelectedCommand}" IsEnabled="{Binding Duplicates.HasGroups}"/>
                         </StackPanel>
                     </Grid>
@@ -327,7 +340,7 @@
                             <TextBlock Text="Applications" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <TextBlock Text="Uninstall apps you no longer need" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
-                        <Button Grid.Column="1" Content="↻  List Applications" Classes="accent" FontWeight="SemiBold" Padding="16,8"
+                        <Button Grid.Column="1" Content="List Applications" Classes="accent" FontWeight="SemiBold" Padding="16,8"
                                 VerticalAlignment="Center" Command="{Binding Apps.LoadCommand}" IsEnabled="{Binding !Apps.IsBusy}"/>
                     </Grid>
 
@@ -349,7 +362,7 @@
                             <TextBlock Text="Control what launches at login — disabling is reversible" FontSize="12"
                                        Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
-                        <Button Grid.Column="1" Content="↻  List Startup Items" Classes="accent" FontWeight="SemiBold" Padding="16,8"
+                        <Button Grid.Column="1" Content="List Startup Items" Classes="accent" FontWeight="SemiBold" Padding="16,8"
                                 VerticalAlignment="Center" Command="{Binding Startup.LoadCommand}" IsEnabled="{Binding !Startup.IsBusy}"/>
                     </Grid>
 
@@ -382,6 +395,46 @@
                                     Command="{Binding FreeMemoryCommand}"/>
                         </Grid>
                     </Border>
+                </DockPanel>
+
+                <!-- Settings -->
+                <DockPanel IsVisible="{Binding IsSettingsSection}" Margin="22,20">
+                    <StackPanel DockPanel.Dock="Top" Margin="0,0,0,16">
+                        <TextBlock Text="Settings" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="Configure the AI &quot;What is this?&quot; explainer" FontSize="12"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    </StackPanel>
+
+                    <ScrollViewer>
+                        <Border Classes="card" Padding="22" VerticalAlignment="Top" HorizontalAlignment="Left" MaxWidth="640">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="Anthropic API key" FontWeight="SemiBold" FontSize="15"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                                           Text="Paste your key to turn on live AI explanations. Without one, CleanSweep uses a built-in offline heuristic. The key is stored locally on this machine only."/>
+                                <TextBox Text="{Binding Settings.ApiKey, Mode=TwoWay}" PlaceholderText="sk-ant-..."
+                                         FontFamily="Consolas,monospace"/>
+
+                                <TextBlock Text="Model (optional)" FontWeight="SemiBold" Margin="0,6,0,0"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBox Text="{Binding Settings.Model, Mode=TwoWay}"
+                                         PlaceholderText="claude-opus-4-8 (default) — try claude-haiku-4-5 for cheaper/faster"/>
+
+                                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,6,0,0">
+                                    <Button Content="Save" Classes="accent" FontWeight="SemiBold" Padding="20,8"
+                                            Command="{Binding Settings.SaveCommand}"/>
+                                    <Button Content="Clear key" Command="{Binding Settings.ClearKeyCommand}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding Settings.StatusText}" TextWrapping="Wrap" Margin="0,6,0,0"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock FontSize="10" Opacity="0.5" TextWrapping="Wrap">
+                                    <Run Text="Stored at:"/>
+                                    <Run Text="{Binding Settings.SettingsPath}"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                    </ScrollViewer>
                 </DockPanel>
             </Grid>
         </Grid>

@@ -24,7 +24,7 @@ public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly ScanEngine _engine = new();
     private readonly IMemoryManager _memory = MemoryManagerFactory.Current;
-    private readonly IItemExplainer _explainer = ItemExplainerFactory.Create();
+    private readonly AnthropicItemExplainer _explainer = ItemExplainerFactory.Create();
     private CancellationTokenSource? _cts;
 
     public ObservableCollection<CategoryViewModel> Categories { get; } = new();
@@ -33,6 +33,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public DuplicatesViewModel Duplicates { get; }
     public AppsViewModel Apps { get; }
     public StartupViewModel Startup { get; }
+    public SettingsViewModel Settings { get; }
 
     [ObservableProperty] private bool _isBusy;
     [ObservableProperty] private bool _hasResults;
@@ -45,7 +46,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private string _memoryDetail = "";
 
     // ---- Sidebar navigation ----
-    // 0 Smart Scan · 1 Large Files · 2 Duplicates · 3 Apps · 4 Startup · 5 Memory
+    // 0 Smart Scan · 1 Large Files · 2 Duplicates · 3 Apps · 4 Startup · 5 Memory · 6 Settings
     [ObservableProperty] private int _selectedSectionIndex;
 
     public bool IsSmartScanSection => SelectedSectionIndex == 0;
@@ -54,6 +55,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public bool IsAppsSection => SelectedSectionIndex == 3;
     public bool IsStartupSection => SelectedSectionIndex == 4;
     public bool IsMemorySection => SelectedSectionIndex == 5;
+    public bool IsSettingsSection => SelectedSectionIndex == 6;
 
     partial void OnSelectedSectionIndexChanged(int value)
     {
@@ -63,6 +65,7 @@ public partial class MainWindowViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsAppsSection));
         OnPropertyChanged(nameof(IsStartupSection));
         OnPropertyChanged(nameof(IsMemorySection));
+        OnPropertyChanged(nameof(IsSettingsSection));
     }
 
     /// <summary>The Large Files category from the last scan, for its dedicated section.</summary>
@@ -80,6 +83,7 @@ public partial class MainWindowViewModel : ViewModelBase
         Duplicates = new DuplicatesViewModel(_engine, PlatformPaths.Current, dialogs);
         Apps = new AppsViewModel(AppInventory.Create(), dialogs);
         Startup = new StartupViewModel(StartupManager.Create(), dialogs);
+        Settings = new SettingsViewModel(_explainer, new SettingsStore());
         RefreshMemory();
     }
 
@@ -117,7 +121,7 @@ public partial class MainWindowViewModel : ViewModelBase
             OnPropertyChanged(nameof(HasLargeFiles));
             StatusText = HasResults
                 ? $"Found {ByteSize.Human(TotalReclaimable)} of reclaimable space across {Categories.Count} categories."
-                : "All clean — nothing to reclaim. ✨";
+                : "All clean — nothing to reclaim.";
         }
         catch (OperationCanceledException) { StatusText = "Scan cancelled."; }
         catch (Exception ex) { StatusText = $"Scan failed: {ex.Message}"; }

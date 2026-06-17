@@ -20,8 +20,8 @@ public sealed class AnthropicItemExplainer : IItemExplainer
     // CLEANSWEEP_AI_MODEL env var to switch.
     private static readonly string DefaultModel = "claude-opus-4-8";
 
-    private readonly string? _apiKey;
-    private readonly string _modelId;
+    private string? _apiKey;
+    private string _modelId;
     private readonly IItemExplainer _fallback;
     private readonly ConcurrentDictionary<string, ItemExplanation> _cache = new();
     private AnthropicClient? _client;
@@ -34,6 +34,18 @@ public sealed class AnthropicItemExplainer : IItemExplainer
     }
 
     public bool IsAiEnabled => _apiKey is not null;
+
+    /// <summary>
+    /// Reconfigures the key/model at runtime (e.g. from the Settings screen).
+    /// Rebuilds the client lazily and clears the cache so items re-explain.
+    /// </summary>
+    public void Configure(string? apiKey, string? modelId)
+    {
+        _apiKey = string.IsNullOrWhiteSpace(apiKey) ? null : apiKey;
+        if (!string.IsNullOrWhiteSpace(modelId)) _modelId = modelId!;
+        _client = null;
+        _cache.Clear();
+    }
 
     public async Task<ItemExplanation> ExplainAsync(CleanItem item, CancellationToken ct)
     {

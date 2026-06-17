@@ -69,7 +69,7 @@ public partial class DuplicatesViewModel : ViewModelBase
             OnPropertyChanged(nameof(HasGroups));
             StatusText = groups.Count > 0
                 ? $"Found {groups.Count} duplicate group(s) · up to {ByteSize.Human(groups.Sum(g => g.ReclaimableBytes))} reclaimable."
-                : "No duplicates found. ✨";
+                : "No duplicates found.";
         }
         catch (OperationCanceledException) { StatusText = "Duplicate scan cancelled."; }
         catch (Exception ex) { StatusText = $"Scan failed: {ex.Message}"; }
