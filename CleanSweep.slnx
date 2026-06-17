@@ -3,4 +3,7 @@
     <Project Path="src/CleanSweep.Core/CleanSweep.Core.csproj" />
     <Project Path="src/CleanSweep/CleanSweep.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CleanSweep.Core.Tests/CleanSweep.Core.Tests.csproj" />
+  </Folder>
 </Solution>
