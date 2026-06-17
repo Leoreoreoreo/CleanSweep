@@ -182,6 +182,34 @@
         <!-- Tinted glass sheet over the blurred backdrop - gives the frosted color -->
         <Panel Background="{DynamicResource GlassOverlayBrush}" IsHitTestVisible="False"/>
 
+        <!-- Soft colour pools behind the glass, so translucent panels read as frosted glass -->
+        <Canvas IsHitTestVisible="False" ClipToBounds="True">
+            <Ellipse Canvas.Left="-150" Canvas.Top="-130" Width="560" Height="560">
+                <Ellipse.Fill>
+                    <RadialGradientBrush>
+                        <GradientStop Color="#5A10B981" Offset="0"/>
+                        <GradientStop Color="#0010B981" Offset="1"/>
+                    </RadialGradientBrush>
+                </Ellipse.Fill>
+            </Ellipse>
+            <Ellipse Canvas.Right="-180" Canvas.Bottom="-180" Width="660" Height="660">
+                <Ellipse.Fill>
+                    <RadialGradientBrush>
+                        <GradientStop Color="#4E0EA5C9" Offset="0"/>
+                        <GradientStop Color="#000EA5C9" Offset="1"/>
+                    </RadialGradientBrush>
+                </Ellipse.Fill>
+            </Ellipse>
+            <Ellipse Canvas.Right="140" Canvas.Top="-220" Width="500" Height="500">
+                <Ellipse.Fill>
+                    <RadialGradientBrush>
+                        <GradientStop Color="#3E22D3A8" Offset="0"/>
+                        <GradientStop Color="#0022D3A8" Offset="1"/>
+                    </RadialGradientBrush>
+                </Ellipse.Fill>
+            </Ellipse>
+        </Canvas>
+
         <Grid ColumnDefinitions="236,*">
 
             <!-- ============ Sidebar ============ -->
@@ -257,7 +285,7 @@
             <Grid Grid.Column="1">
 
                 <!-- Smart Scan -->
-                <DockPanel IsVisible="{Binding IsSmartScanSection}" Margin="22,20">
+                <DockPanel Classes="page" Opacity="{Binding IsSmartScanSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsSmartScanSection}" Margin="22,20">
                     <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Smart Scan" Classes="h1"/>
@@ -305,7 +333,7 @@
                 </DockPanel>
 
                 <!-- Large Files -->
-                <DockPanel IsVisible="{Binding IsLargeFilesSection}" Margin="22,20">
+                <DockPanel Classes="page" Opacity="{Binding IsLargeFilesSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsLargeFilesSection}" Margin="22,20">
                     <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Large Files" Classes="h1"/>
@@ -331,7 +359,7 @@
                 </DockPanel>
 
                 <!-- Duplicates -->
-                <DockPanel IsVisible="{Binding IsDuplicatesSection}" Margin="22,20">
+                <DockPanel Classes="page" Opacity="{Binding IsDuplicatesSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsDuplicatesSection}" Margin="22,20">
                     <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Duplicate Files" Classes="h1"/>
@@ -357,7 +385,7 @@
                 </DockPanel>
 
                 <!-- Apps -->
-                <DockPanel IsVisible="{Binding IsAppsSection}" Margin="22,20">
+                <DockPanel Classes="page" Opacity="{Binding IsAppsSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsAppsSection}" Margin="22,20">
                     <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Applications" Classes="h1"/>
@@ -378,7 +406,7 @@
                 </DockPanel>
 
                 <!-- Startup -->
-                <DockPanel IsVisible="{Binding IsStartupSection}" Margin="22,20">
+                <DockPanel Classes="page" Opacity="{Binding IsStartupSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsStartupSection}" Margin="22,20">
                     <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Startup Items" Classes="h1"/>
@@ -400,7 +428,7 @@
                 </DockPanel>
 
                 <!-- Memory -->
-                <DockPanel IsVisible="{Binding IsMemorySection}" Margin="22,20">
+                <DockPanel Classes="page" Opacity="{Binding IsMemorySection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsMemorySection}" Margin="22,20">
                     <StackPanel DockPanel.Dock="Top" Margin="0,0,0,16">
                         <TextBlock Text="Memory" Classes="h1"/>
                         <TextBlock Text="Free up RAM by trimming process working sets" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
@@ -421,7 +449,7 @@
                 </DockPanel>
 
                 <!-- Settings -->
-                <DockPanel IsVisible="{Binding IsSettingsSection}" Margin="22,20">
+                <DockPanel Classes="page" Opacity="{Binding IsSettingsSection, Converter={StaticResource BoolToOpacity}}" IsHitTestVisible="{Binding IsSettingsSection}" Margin="22,20">
                     <StackPanel DockPanel.Dock="Top" Margin="0,0,0,16">
                         <TextBlock Text="Settings" Classes="h1"/>
                         <TextBlock Text="Configure the AI &quot;What is this?&quot; explainer" FontSize="12"

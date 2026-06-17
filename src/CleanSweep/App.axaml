@@ -29,6 +29,7 @@
             <SolidColorBrush x:Key="DangerBrushHover" Color="#D6453D"/>
 
             <conv:CategoryIconConverter x:Key="CategoryIcon"/>
+            <conv:BoolToOpacityConverter x:Key="BoolToOpacity"/>
 
             <!-- Vector icons (Material-style single-path geometries) -->
             <StreamGeometry x:Key="IconSearch">M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z</StreamGeometry>
@@ -51,10 +52,13 @@
                 <!-- Light "liquid glass" palette -->
                 <ResourceDictionary x:Key="Light">
                     <Color x:Key="AcrylicTintColor">#EEF1F7</Color>
-                    <SolidColorBrush x:Key="CardBrush" Color="#FFFFFF" Opacity="0.55"/>
-                    <SolidColorBrush x:Key="CardBrushHover" Color="#FFFFFF" Opacity="0.72"/>
-                    <SolidColorBrush x:Key="CardBorderBrush" Color="#FFFFFF" Opacity="0.75"/>
-                    <SolidColorBrush x:Key="SidebarBrush" Color="#FFFFFF" Opacity="0.38"/>
+                    <SolidColorBrush x:Key="CardBrush" Color="#FFFFFF" Opacity="0.45"/>
+                    <SolidColorBrush x:Key="CardBrushHover" Color="#FFFFFF" Opacity="0.62"/>
+                    <LinearGradientBrush x:Key="CardBorderBrush" StartPoint="0%,0%" EndPoint="0%,100%">
+                        <GradientStop Color="#E8FFFFFF" Offset="0"/>
+                        <GradientStop Color="#5CFFFFFF" Offset="1"/>
+                    </LinearGradientBrush>
+                    <SolidColorBrush x:Key="SidebarBrush" Color="#FFFFFF" Opacity="0.32"/>
                     <SolidColorBrush x:Key="HairlineBrush" Color="#000000" Opacity="0.08"/>
                     <SolidColorBrush x:Key="TextPrimaryBrush" Color="#0F131B"/>
                     <SolidColorBrush x:Key="TextSecondaryBrush" Color="#0F131B" Opacity="0.6"/>
@@ -63,18 +67,21 @@
                     <SolidColorBrush x:Key="AccentTintBrush" Color="#0E9F6E" Opacity="0.13"/>
                     <!-- Lower alpha so the acrylic desktop-blur shows through as real glass depth -->
                     <LinearGradientBrush x:Key="GlassOverlayBrush" StartPoint="0%,0%" EndPoint="100%,100%">
-                        <GradientStop Color="#8CCDEBE2" Offset="0"/>
-                        <GradientStop Color="#8AC9E6EC" Offset="0.55"/>
-                        <GradientStop Color="#8CD3ECDE" Offset="1"/>
+                        <GradientStop Color="#55CDEBE2" Offset="0"/>
+                        <GradientStop Color="#52C9E6EC" Offset="0.55"/>
+                        <GradientStop Color="#55D3ECDE" Offset="1"/>
                     </LinearGradientBrush>
                 </ResourceDictionary>
                 <!-- Dark "liquid glass" palette -->
                 <ResourceDictionary x:Key="Dark">
                     <Color x:Key="AcrylicTintColor">#15171C</Color>
-                    <SolidColorBrush x:Key="CardBrush" Color="#FFFFFF" Opacity="0.06"/>
-                    <SolidColorBrush x:Key="CardBrushHover" Color="#FFFFFF" Opacity="0.10"/>
-                    <SolidColorBrush x:Key="CardBorderBrush" Color="#FFFFFF" Opacity="0.12"/>
-                    <SolidColorBrush x:Key="SidebarBrush" Color="#FFFFFF" Opacity="0.04"/>
+                    <SolidColorBrush x:Key="CardBrush" Color="#FFFFFF" Opacity="0.09"/>
+                    <SolidColorBrush x:Key="CardBrushHover" Color="#FFFFFF" Opacity="0.14"/>
+                    <LinearGradientBrush x:Key="CardBorderBrush" StartPoint="0%,0%" EndPoint="0%,100%">
+                        <GradientStop Color="#38FFFFFF" Offset="0"/>
+                        <GradientStop Color="#10FFFFFF" Offset="1"/>
+                    </LinearGradientBrush>
+                    <SolidColorBrush x:Key="SidebarBrush" Color="#FFFFFF" Opacity="0.05"/>
                     <SolidColorBrush x:Key="HairlineBrush" Color="#FFFFFF" Opacity="0.10"/>
                     <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F2F4F8"/>
                     <SolidColorBrush x:Key="TextSecondaryBrush" Color="#F2F4F8" Opacity="0.62"/>
@@ -83,9 +90,9 @@
                     <SolidColorBrush x:Key="AccentTintBrush" Color="#2FB587" Opacity="0.18"/>
                     <!-- Lower alpha so the acrylic desktop-blur shows through as real glass depth -->
                     <LinearGradientBrush x:Key="GlassOverlayBrush" StartPoint="0%,0%" EndPoint="100%,100%">
-                        <GradientStop Color="#99102A2C" Offset="0"/>
-                        <GradientStop Color="#940F2630" Offset="0.55"/>
-                        <GradientStop Color="#9911302A" Offset="1"/>
+                        <GradientStop Color="#70102A2C" Offset="0"/>
+                        <GradientStop Color="#6C0F2630" Offset="0.55"/>
+                        <GradientStop Color="#7011302A" Offset="1"/>
                     </LinearGradientBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
@@ -101,15 +108,27 @@
             <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="14"/>
-            <Setter Property="BoxShadow" Value="0 10 34 0 #30000000"/>
+            <Setter Property="BoxShadow" Value="0 12 36 0 #33000000"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
             <Setter Property="Transitions">
                 <Transitions>
                     <BrushTransition Property="Background" Duration="0:0:0.18"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.18" Easing="CubicEaseOut"/>
                 </Transitions>
             </Setter>
         </Style>
         <Style Selector="Border.card:pointerover">
             <Setter Property="Background" Value="{DynamicResource CardBrushHover}"/>
+            <Setter Property="RenderTransform" Value="translateY(-3px)"/>
+        </Style>
+
+        <!-- Section pages cross-fade when switching the sidebar -->
+        <Style Selector="DockPanel.page">
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.28" Easing="CubicEaseOut"/>
+                </Transitions>
+            </Setter>
         </Style>
 
         <!-- Accent buttons: round the FluentTheme accent button -->
