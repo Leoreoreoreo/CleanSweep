@@ -416,6 +416,22 @@
                     <ProgressBar DockPanel.Dock="Top" IsIndeterminate="True" Height="3" Margin="0,12,0,0"
                                  IsVisible="{Binding DiskUsage.IsBusy}"/>
 
+                    <ItemsControl DockPanel.Dock="Top" Margin="0,14,0,0" ItemsSource="{Binding DiskUsage.Breadcrumbs}"
+                                  IsVisible="{Binding DiskUsage.HasResults}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate><WrapPanel Orientation="Horizontal"/></ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:CrumbViewModel">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button Classes="crumb" Content="{Binding Name}" Command="{Binding GoCommand}"/>
+                                    <TextBlock Text="&#x203A;" Margin="1,0" VerticalAlignment="Center" Opacity="0.45"
+                                               IsVisible="{Binding !IsLast}" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
                     <Border DockPanel.Dock="Bottom" Classes="card" Padding="16,12" Margin="0,14,0,0">
                         <TextBlock Text="{Binding DiskUsage.StatusText}" TextWrapping="Wrap"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
@@ -433,8 +449,12 @@
 
                             <Border Classes="card" Padding="24" VerticalAlignment="Top" IsVisible="{Binding DiskUsage.HasResults}">
                                 <Grid ColumnDefinitions="Auto,*">
-                                    <!-- Donut -->
-                                    <Grid Grid.Column="0" Width="200" Height="200" VerticalAlignment="Top">
+                                    <!-- Donut (grows + counts up on each analysis) -->
+                                    <Grid Grid.Column="0" Width="200" Height="200" VerticalAlignment="Top"
+                                          Opacity="{Binding DiskUsage.RevealOpacity}" RenderTransformOrigin="0.5,0.5">
+                                        <Grid.RenderTransform>
+                                            <ScaleTransform ScaleX="{Binding DiskUsage.RevealScale}" ScaleY="{Binding DiskUsage.RevealScale}"/>
+                                        </Grid.RenderTransform>
                                         <Ellipse Width="168" Height="168" StrokeThickness="24" Stroke="{DynamicResource HairlineBrush}"
                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         <ItemsControl ItemsSource="{Binding DiskUsage.Slices}">
@@ -456,31 +476,35 @@
                                         </StackPanel>
                                     </Grid>
 
-                                    <!-- Legend -->
-                                    <ItemsControl Grid.Column="1" Margin="30,2,0,0" ItemsSource="{Binding DiskUsage.Slices}">
+                                    <!-- Legend (click a folder row to go deeper) -->
+                                    <ItemsControl Grid.Column="1" Margin="26,0,0,0" Opacity="{Binding DiskUsage.RevealOpacity}"
+                                                  ItemsSource="{Binding DiskUsage.Slices}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate x:DataType="vm:UsageSliceViewModel">
-                                                <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,13">
-                                                    <Ellipse Grid.Column="0" Width="11" Height="11" Fill="{Binding Brush}" VerticalAlignment="Center"/>
-                                                    <StackPanel Grid.Column="1" Margin="11,0,14,0" VerticalAlignment="Center" Spacing="5">
-                                                        <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis"
-                                                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                                        <ProgressBar Minimum="0" Maximum="100" Value="{Binding Percent}" Height="5"
-                                                                     Foreground="{Binding Brush}"/>
-                                                    </StackPanel>
-                                                    <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
-                                                        <TextBlock Text="{Binding SizeText}" FontWeight="SemiBold" HorizontalAlignment="Right"
-                                                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                                        <TextBlock Text="{Binding PercentText}" FontSize="11" HorizontalAlignment="Right"
-                                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                                    </StackPanel>
-                                                    <Grid.ContextMenu>
+                                                <Button Classes="row" Margin="0,0,0,2" Command="{Binding DrillCommand}"
+                                                        ToolTip.Tip="{Binding Path}">
+                                                    <Button.ContextMenu>
                                                         <ContextMenu>
                                                             <MenuItem Header="Open" Command="{Binding OpenCommand}" IsEnabled="{Binding CanReveal}"/>
                                                             <MenuItem Header="Reveal in folder" Command="{Binding RevealCommand}" IsEnabled="{Binding CanReveal}"/>
                                                         </ContextMenu>
-                                                    </Grid.ContextMenu>
-                                                </Grid>
+                                                    </Button.ContextMenu>
+                                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                                        <Ellipse Grid.Column="0" Width="11" Height="11" Fill="{Binding Brush}" VerticalAlignment="Center"/>
+                                                        <StackPanel Grid.Column="1" Margin="11,0,14,0" VerticalAlignment="Center" Spacing="5">
+                                                            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis"
+                                                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                            <ProgressBar Minimum="0" Maximum="100" Value="{Binding Percent}" Height="5"
+                                                                         Foreground="{Binding Brush}"/>
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                                            <TextBlock Text="{Binding SizeText}" FontWeight="SemiBold" HorizontalAlignment="Right"
+                                                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                            <TextBlock Text="{Binding PercentText}" FontSize="11" HorizontalAlignment="Right"
+                                                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Button>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
